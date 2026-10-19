@@ -1,0 +1,4002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ShopDesk POS - Complete Retail System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/*──────────────────────────────────────────────
+  ROOT & RESET
+──────────────────────────────────────────────*/
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --accent:#1B6B3A;
+  --accent2:#2E9B57;
+  --accent-light:#1B6B3A14;
+  --accent-mid:#1B6B3A30;
+  --bg:#F5F5F0;
+  --card:#FFFFFF;
+  --border:#E8E8E4;
+  --text:#141414;
+  --muted:#6B6B65;
+  --faint:#ABABA5;
+  --danger:#D63B3B;
+  --warn:#E8891A;
+  --success:#1B6B3A;
+  --sidebar-w:260px;
+}
+html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
+button{font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+input,select,textarea{font-family:'Plus Jakarta Sans',sans-serif;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#D5D5CF;border-radius:4px;}
+img{display:block;max-width:100%;}
+
+/*──────────────────────────────────────────────
+  UTILITIES
+──────────────────────────────────────────────*/
+.hidden{display:none!important;}
+.flex{display:flex;}
+.flex-col{display:flex;flex-direction:column;}
+.items-center{align-items:center;}
+.justify-between{justify-content:space-between;}
+.gap-8{gap:8px;}
+.gap-12{gap:12px;}
+.gap-16{gap:16px;}
+.gap-20{gap:20px;}
+.mt-8{margin-top:8px;}
+.mt-16{margin-top:16px;}
+.mt-20{margin-top:20px;}
+.w-full{width:100%;}
+.text-muted{color:var(--muted);}
+.text-sm{font-size:12px;}
+.text-danger{color:var(--danger);}
+.fw-600{font-weight:600;}
+.fw-700{font-weight:700;}
+
+/*──────────────────────────────────────────────
+  BUTTONS
+──────────────────────────────────────────────*/
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;border:none;transition:all .18s;cursor:pointer;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-secondary{background:var(--card);color:var(--text);border:1.5px solid var(--border);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:#FFF0F0;color:var(--danger);border:1.5px solid #FFCCCC;}
+.btn-danger:hover{background:#FFE0E0;}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-lg{padding:14px 28px;font-size:15px;border-radius:12px;font-weight:700;}
+.btn-icon{width:36px;height:36px;padding:0;border-radius:8px;background:var(--bg);border:1.5px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;}
+.btn-icon:hover{background:var(--accent-light);border-color:var(--accent);}
+
+/*──────────────────────────────────────────────
+  FORM ELEMENTS
+──────────────────────────────────────────────*/
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;}
+.inp{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#FAFAF8;transition:all .2s;color:var(--text);}
+.inp:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-light);}
+.inp::placeholder{color:#C5C5BF;}
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6B65' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+
+/* Toggle */
+.toggle-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.toggle{position:relative;width:40px;height:22px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{position:absolute;inset:0;background:#D5D5CF;border-radius:11px;transition:.2s;}
+.toggle input:checked+.toggle-track{background:var(--accent);}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+.toggle input:checked~.toggle-thumb{left:21px;}
+
+/*──────────────────────────────────────────────
+  BADGE
+──────────────────────────────────────────────*/
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-green{background:#E6F5EC;color:#1B6B3A;}
+.badge-blue{background:#E8F0FF;color:#2554C7;}
+.badge-orange{background:#FFF3E0;color:#C06200;}
+.badge-red{background:#FFF0F0;color:#D63B3B;}
+.badge-gray{background:#F0F0EC;color:#6B6B65;}
+.dot-badge{width:20px;height:20px;border-radius:50%;background:var(--danger);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/*──────────────────────────────────────────────
+  CARDS
+──────────────────────────────────────────────*/
+.card{background:var(--card);border-radius:16px;border:1px solid var(--border);}
+.card-p{padding:24px;}
+.card-title{font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-bottom:16px;color:var(--text);}
+
+/*──────────────────────────────────────────────
+  TABLE
+──────────────────────────────────────────────*/
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1.5px solid var(--border);}
+.tbl td{padding:13px 14px;font-size:13px;color:#444;border-bottom:1px solid #F5F5F0;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tbody tr:hover td{background:#FAFAF8;}
+
+/*──────────────────────────────────────────────
+  MODAL
+──────────────────────────────────────────────*/
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--card);border-radius:20px;padding:32px;width:520px;max-width:90vw;max-height:90vh;overflow-y:auto;transform:translateY(20px) scale(.97);transition:transform .25s;}
+.modal-overlay.open .modal-box{transform:none;}
+.modal-title{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:24px;}
+.modal-actions{display:flex;gap:10px;margin-top:24px;}
+.modal-warn{background:#FFF8EC;border-left:3px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:13px;color:#7A4A00;margin-bottom:18px;}
+
+/*──────────────────────────────────────────────
+  TOAST
+──────────────────────────────────────────────*/
+#toast{position:fixed;bottom:28px;right:28px;background:#141414;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+#toast.show{opacity:1;transform:none;}
+
+/*══════════════════════════════════════════════
+  SETUP SCREEN (Admin Only)
+══════════════════════════════════════════════*/
+.setup-screen {
+  display: flex;
+  height: 100vh;
+  align-items: stretch;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* ── Instruction Wizard ── */
+.wizard-left {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--accent);
+  padding: 48px 36px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.wizard-left::before {
+  content: '';
+  position: absolute;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  top: -80px; right: -100px;
+}
+.wizard-left::after {
+  content: '';
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  bottom: -40px; left: -40px;
+}
+.wizard-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.wizard-brand-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 40px;
+}
+.wizard-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.wizard-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  transition: background .2s;
+  cursor: pointer;
+}
+.wizard-step-item.active { background: rgba(255,255,255,.15); }
+.wizard-step-item.done .wstep-num { background: rgba(255,255,255,.9); color: var(--accent); }
+.wstep-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  border: 1.5px solid rgba(255,255,255,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-weight: 700; font-size: 13px;
+  color: #fff; flex-shrink: 0; margin-top: 1px;
+}
+.wstep-title { font-size: 14px; font-weight: 700; color: #fff; }
+.wstep-desc  { font-size: 12px; color: rgba(255,255,255,.6); margin-top: 2px; line-height: 1.4; }
+.wizard-version {
+  margin-top: auto;
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  padding-top: 24px;
+}
+
+/* ── Wizard Right (content pane) ── */
+.wizard-right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 48px 52px;
+  display: flex;
+  flex-direction: column;
+}
+.wizard-pane { display: none; flex-direction: column; height: 100%; }
+.wizard-pane.active { display: flex; }
+.wizard-pane-icon {
+  font-size: 44px; margin-bottom: 20px;
+}
+.wizard-pane-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 700;
+  color: var(--text); margin-bottom: 10px;
+}
+.wizard-pane-sub {
+  font-size: 14px; color: var(--muted);
+  margin-bottom: 32px; line-height: 1.7;
+}
+.instruction-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+  flex: 1;
+}
+.istep {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+.istep-num {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Fraunces', serif;
+  font-weight: 700; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.istep-content {}
+.istep-title { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+.istep-desc  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.istep-code  {
+  background: #1a1a1a; color: #7fffae;
+  border-radius: 8px; padding: 10px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px; margin-top: 8px;
+  line-height: 1.8; white-space: pre;
+}
+.istep-note {
+  background: #FFF8EC;
+  border-left: 3px solid var(--warn);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  font-size: 12px; color: #7A4A00;
+  margin-top: 8px; line-height: 1.5;
+}
+.istep-success {
+  background: #E6F5EC;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  font-size: 12px; color: #1B6B3A;
+  margin-top: 8px; line-height: 1.5;
+}
+.wizard-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.wizard-progress {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-right: auto;
+}
+.wprog-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background .2s;
+}
+.wprog-dot.active { background: var(--accent); width: 20px; border-radius: 4px; }
+
+/* Browser folder setup card (non-Electron) */
+.setup-card {
+  background: var(--card);
+  border-radius: 24px;
+  padding: 40px;
+  width: 520px;
+  max-width: 90%;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  margin: auto;
+}
+.setup-icon {
+  width: 80px; height: 80px;
+  background: var(--accent-light);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; margin-bottom: 24px;
+}
+.setup-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 700; margin-bottom: 8px;
+}
+.setup-desc { color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+.folder-path {
+  background: #FAFAF8; border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px; font-size: 13px; color: var(--text); word-break: break-all;
+}
+.folder-path.empty { color: var(--faint); border-style: dashed; }
+.folder-browse {
+  width: 100%; padding: 16px;
+  background: var(--accent); color: white;
+  border: none; border-radius: 12px;
+  font-weight: 600; font-size: 15px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.folder-browse:hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+}
+
+.backup-status {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backup-status.success {
+  background: #E6F5EC;
+  color: #1B6B3A;
+}
+
+.backup-status.error {
+  background: #FFF0F0;
+  color: #D63B3B;
+}
+
+.backup-status.syncing {
+  background: #FFF3E0;
+  color: #C06200;
+}
+
+.data-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px;
+  background: #FAFAF8;
+  border-radius: 12px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/*══════════════════════════════════════════════
+  LOGIN SCREEN
+══════════════════════════════════════════════*/
+#login-screen{display:flex;height:100vh;overflow:hidden;}
+
+/* LEFT PANEL */
+.login-left{
+  width:48%;flex-shrink:0;
+  background:var(--accent);
+  display:flex;flex-direction:column;
+  padding:56px 52px;
+  position:relative;overflow:hidden;
+}
+.login-left::before{
+  content:'';position:absolute;
+  width:420px;height:420px;border-radius:50%;
+  background:rgba(255,255,255,.06);
+  top:-100px;right:-120px;
+}
+.login-left::after{
+  content:'';position:absolute;
+  width:280px;height:280px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+  bottom:-60px;left:-60px;
+}
+.brand-logo-wrap{
+  width:72px;height:72px;background:rgba(255,255,255,.15);
+  border-radius:20px;display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#fff;
+  margin-bottom:32px;border:2px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(8px);
+}
+.brand-logo-img{width:100%;height:100%;object-fit:contain;border-radius:18px;display:none;}
+.brand-name{font-family:'Fraunces',serif;font-size:38px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:10px;}
+.brand-tagline{font-size:15px;color:rgba(255,255,255,.75);margin-bottom:40px;line-height:1.6;}
+.brand-info-list{margin-top:auto;display:flex;flex-direction:column;gap:14px;}
+.brand-info-item{display:flex;align-items:center;gap:12px;}
+.brand-info-icon{width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.brand-info-text{font-size:13px;color:rgba(255,255,255,.8);line-height:1.4;}
+.brand-info-text strong{color:#fff;display:block;font-size:14px;}
+
+/* RIGHT PANEL */
+.login-right{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);padding:40px;overflow-y:auto;
+}
+.login-form-wrap{width:100%;max-width:400px;}
+.login-form-title{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.login-form-sub{font-size:14px;color:var(--muted);margin-bottom:32px;}
+
+/* Role tabs */
+.role-tabs{display:flex;gap:6px;background:var(--border);border-radius:12px;padding:4px;margin-bottom:28px;}
+.role-tab{flex:1;padding:9px;border-radius:9px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+.role-tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.08);}
+
+/* Remember me */
+.remember-row{display:flex;align-items:center;gap:10px;margin:14px 0 20px;}
+.remember-row span{font-size:13px;color:var(--muted);}
+
+.login-submit{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.01em;}
+.login-submit:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 20px var(--accent-mid);}
+.login-err{font-size:13px;color:var(--danger);margin-top:10px;min-height:18px;}
+
+/*══════════════════════════════════════════════
+  APP LAYOUT
+══════════════════════════════════════════════*/
+#app{display:none;height:100vh;overflow:hidden;}
+#app.visible{display:flex;}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--card);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sidebar-top{padding:20px 18px;border-bottom:1px solid var(--border);}
+.sidebar-brand{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:10px;}
+.sidebar-brand-icon{width:32px;height:32px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:900;font-size:14px;color:#fff;flex-shrink:0;}
+.sidebar-user{padding:14px 18px;border-bottom:1px solid var(--border);}
+.sidebar-user-name{font-weight:700;font-size:14px;color:var(--text);}
+.sidebar-user-role{font-size:11px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+.sidebar-nav{flex:1;padding:10px 10px;overflow-y:auto;}
+.nav-group-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#CCCCC8;padding:14px 10px 6px;display:block;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;position:relative;margin-bottom:2px;}
+.nav-item:hover{background:var(--bg);color:var(--text);}
+.nav-item.active{background:var(--accent-light);color:var(--accent);}
+.nav-item .nav-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0;}
+.nav-item .nav-badge{margin-left:auto;}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border);}
+.logout-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;padding:8px 10px;border-radius:8px;transition:all .15s;}
+.logout-row:hover{color:var(--danger);background:#FFF0F0;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;background:var(--bg);}
+.page{display:none;padding:32px;}
+.page.active{display:block;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.page-title{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--text);}
+.page-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+
+/*══════════════════════════════════════════════
+  DASHBOARD
+══════════════════════════════════════════════*/
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--card);border-radius:16px;padding:22px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.stat-card::after{content:'';position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:var(--accent-light);}
+.stat-icon{font-size:22px;margin-bottom:12px;}
+.stat-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;}
+.stat-val{font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--text);}
+.stat-change{font-size:12px;margin-top:4px;}
+.stat-change.up{color:#1B6B3A;}
+.stat-change.down{color:var(--danger);}
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px;}
+.dash-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.chart-wrap{position:relative;height:220px;}
+
+/*══════════════════════════════════════════════
+  POS
+══════════════════════════════════════════════*/
+.pos-grid{display:grid;grid-template-columns:1fr 380px;gap:20px;height:calc(100vh - 96px);}
+.pos-left{background:var(--card);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;overflow:hidden;border:1px solid var(--border);}
+.search-bar{position:relative;}
+.search-bar input{padding-left:40px;}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:#CCC;}
+.cat-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.cat-btn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;}
+.cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;overflow-y:auto;flex:1;align-content:start;}
+.prod-card{background:#FAFAF8;border:1.5px solid var(--border);border-radius:12px;padding:14px 12px;cursor:pointer;transition:all .15s;text-align:center;}
+.prod-card:hover{border-color:var(--accent);background:#fff;transform:translateY(-2px);box-shadow:0 6px 20px rgba(27,107,58,.1);}
+.prod-image{width:60px;height:60px;margin:0 auto 8px;border-radius:8px;overflow:hidden;background:#f0f0ec;display:flex;align-items:center;justify-content:center;}
+.prod-image img{width:100%;height:100%;object-fit:cover;}
+.prod-image span{font-size:24px;}
+.prod-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.3;}
+.prod-brand{font-size:11px;color:var(--muted);margin-bottom:5px;}
+.prod-price{font-size:14px;font-weight:700;color:var(--accent);}
+.prod-stock{font-size:10px;color:var(--muted);margin-top:4px;}
+.prod-stock.low{color:var(--danger);font-weight:700;}
+.add-prod-tile{border:2px dashed #D5D5CF;border-radius:12px;padding:14px 12px;cursor:pointer;text-align:center;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;width:100%;}
+.add-prod-tile:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Cart */
+.cart-panel{background:var(--card);border-radius:16px;padding:20px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);}
+.cart-title{font-family:'Fraunces',serif;font-weight:700;font-size:17px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.clear-cart{font-size:12px;color:#CCC;cursor:pointer;font-weight:500;font-family:'Plus Jakarta Sans',sans-serif;}
+.clear-cart:hover{color:var(--danger);}
+.cart-items{flex:1;overflow-y:auto;max-height:400px;}
+.cart-empty{text-align:center;color:#CCC;font-size:13px;padding:48px 0;line-height:2;}
+.cart-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #F5F5F0;}
+.cart-item-name{flex:1;font-size:12px;font-weight:600;color:var(--text);line-height:1.3;}
+.cart-item-total{font-size:12px;color:var(--muted);width:56px;text-align:right;}
+.qty-ctrl{display:flex;align-items:center;gap:4px;}
+.qty-btn{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'Plus Jakarta Sans',sans-serif;}
+.qty-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+.qty-num{width:22px;text-align:center;font-size:13px;font-weight:700;}
+.cart-footer{border-top:1px solid #F0F0EC;padding-top:14px;margin-top:8px;}
+.total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+.total-label{font-size:13px;color:var(--muted);}
+.total-val{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);}
+.pay-methods{display:flex;gap:8px;margin:12px 0;}
+.pay-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.pay-btn.selected{background:var(--accent);color:#fff;border-color:var(--accent);}
+.checkout-btn{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.01em;}
+.checkout-btn:hover{background:var(--accent2);}
+.checkout-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/*══════════════════════════════════════════════
+  RECEIPT
+══════════════════════════════════════════════*/
+.receipt-wrap{text-align:center;}
+.receipt-shop{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--accent);}
+.receipt-addr{font-size:12px;color:var(--muted);margin-top:3px;}
+.receipt-divider{border:none;border-top:1.5px dashed #DDDDD8;margin:14px 0;}
+.receipt-row{display:flex;justify-content:space-between;font-size:13px;color:#555;margin-bottom:5px;}
+.receipt-total{display:flex;justify-content:space-between;font-weight:700;font-size:16px;color:var(--text);margin-top:8px;}
+.receipt-thanks{font-size:12px;color:var(--muted);margin-top:16px;line-height:1.6;}
+
+/*══════════════════════════════════════════════
+  PRODUCTS PAGE
+══════════════════════════════════════════════*/
+.pending-item{background:#FFFBF0;border-radius:12px;padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;border:1px solid #FDEDC5;}
+.prod-icon-cell{width:40px;height:40px;border-radius:8px;background:#F5F5F0;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;}
+.prod-icon-cell img{width:100%;height:100%;object-fit:cover;}
+
+/*══════════════════════════════════════════════
+  STAFF & ACTIVITY
+══════════════════════════════════════════════*/
+.staff-card{background:var(--card);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px;border:1px solid var(--border);margin-bottom:10px;}
+.staff-avatar{width:48px;height:48px;border-radius:14px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:900;font-size:18px;color:var(--accent);flex-shrink:0;}
+.staff-name{font-weight:700;font-size:15px;color:var(--text);}
+.staff-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.staff-actions{margin-left:auto;display:flex;gap:8px;}
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.perm-item{display:flex;align-items:center;justify-content:space-between;background:#FAFAF8;border-radius:10px;padding:10px 14px;border:1px solid var(--border);}
+.perm-label{font-size:13px;font-weight:600;color:var(--text);}
+
+.activity-log {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-time {
+  font-size: 11px;
+  color: var(--muted);
+  min-width: 80px;
+}
+
+.activity-worker {
+  font-weight: 600;
+  min-width: 120px;
+}
+
+.activity-action {
+  flex: 1;
+  color: var(--text);
+}
+
+/*══════════════════════════════════════════════
+  REPORTS
+══════════════════════════════════════════════*/
+.report-filters{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.report-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.report-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.top-product{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F5F5F0;}
+.top-product:last-child{border-bottom:none;}
+.top-prod-rank{width:24px;height:24px;border-radius:6px;background:var(--accent-light);color:var(--accent);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.top-prod-bar{flex:1;height:6px;background:#F0F0EC;border-radius:3px;overflow:hidden;margin:0 10px;}
+.top-prod-fill{height:100%;background:var(--accent);border-radius:3px;}
+
+/*══════════════════════════════════════════════
+  SETTINGS TABS
+══════════════════════════════════════════════*/
+.settings-tabs{display:flex;gap:4px;background:#EEEEE8;border-radius:12px;padding:4px;margin-bottom:28px;flex-wrap:wrap;}
+.settings-tab{flex:1;padding:9px 14px;border-radius:9px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;min-width:80px;}
+.settings-tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.settings-pane{display:none;}
+.settings-pane.active{display:block;}
+.settings-section{background:var(--card);border-radius:16px;padding:24px;border:1px solid var(--border);margin-bottom:20px;}
+.settings-section-title{font-family:'Fraunces',serif;font-weight:700;font-size:16px;margin-bottom:18px;color:var(--text);}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid #F5F5F0;}
+.settings-row:last-child{border-bottom:none;}
+.settings-row-label{font-weight:600;font-size:14px;}
+.settings-row-desc{font-size:12px;color:var(--muted);margin-top:2px;}
+.swatch-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.swatch{width:32px;height:32px;border-radius:9px;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative;}
+.swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;}
+.settings-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+/* Data management section */
+.data-section {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.data-section-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.folder-info {
+  background: #FAFAF8;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.folder-path-display {
+  font-family: monospace;
+  font-size: 12px;
+  background: var(--card);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 8px 0;
+  word-break: break-all;
+}
+
+.last-backup {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.backup-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .pos-grid {
+    grid-template-columns: 1fr;
+  }
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .login-left {
+    display: none;
+  }
+  .login-right {
+    width: 100%;
+  }
+  .sidebar {
+    width: 70px;
+  }
+  .sidebar-brand span:not(.sidebar-brand-icon),
+  .sidebar-user div,
+  .nav-item span:not(.nav-icon),
+  .logout-row span:last-child {
+    display: none;
+  }
+  .sidebar-brand {
+    justify-content: center;
+  }
+  .report-grid-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<!--==============================================
+    SETUP / INSTRUCTION SCREEN
+================================================-->
+<div id="setup-screen" class="setup-screen">
+
+  <!-- ELECTRON WIZARD (shown when running as Electron desktop app) -->
+  <div id="electron-wizard" style="display:none;flex:1;width:100%">
+    <div class="wizard-left">
+      <div class="wizard-brand">ShopDesk POS</div>
+      <div class="wizard-brand-sub">Setup &amp; Installation Guide</div>
+      <div class="wizard-steps">
+        <div class="wizard-step-item active" onclick="goWizardStep(1)">
+          <div class="wstep-num" id="wnum-1">1</div>
+          <div><div class="wstep-title">Welcome</div><div class="wstep-desc">What is ShopDesk?</div></div>
+        </div>
+        <div class="wizard-step-item" onclick="goWizardStep(2)">
+          <div class="wstep-num" id="wnum-2">2</div>
+          <div><div class="wstep-title">Requirements</div><div class="wstep-desc">What you need first</div></div>
+        </div>
+        <div class="wizard-step-item" onclick="goWizardStep(3)">
+          <div class="wstep-num" id="wnum-3">3</div>
+          <div><div class="wstep-title">Installation</div><div class="wstep-desc">Get the app running</div></div>
+        </div>
+        <div class="wizard-step-item" onclick="goWizardStep(4)">
+          <div class="wstep-num" id="wnum-4">4</div>
+          <div><div class="wstep-title">First Login</div><div class="wstep-desc">Log in &amp; configure</div></div>
+        </div>
+        <div class="wizard-step-item" onclick="goWizardStep(5)">
+          <div class="wstep-num" id="wnum-5">5</div>
+          <div><div class="wstep-title">Build .exe</div><div class="wstep-desc">Create installer for others</div></div>
+        </div>
+      </div>
+      <div class="wizard-version">ShopDesk POS v2.0 &nbsp;&#183;&nbsp; Built for Ghana &#127468;&#127734;</div>
+    </div>
+
+    <div class="wizard-right">
+
+      <!-- Pane 1: Welcome -->
+      <div class="wizard-pane active" id="wpane-1">
+        <div class="wizard-pane-icon">&#128075;</div>
+        <div class="wizard-pane-title">Welcome to ShopDesk POS</div>
+        <div class="wizard-pane-sub">ShopDesk is a complete Point of Sale system for local retail shops. It runs fully offline on your Windows computer &mdash; no internet subscription needed.</div>
+        <div class="instruction-steps">
+          <div class="istep"><div class="istep-num">&#128722;</div><div class="istep-content"><div class="istep-title">Point of Sale</div><div class="istep-desc">Sell products, manage a cart, accept Cash &amp; Mobile Money, and print receipts instantly.</div></div></div>
+          <div class="istep"><div class="istep-num">&#128230;</div><div class="istep-content"><div class="istep-title">Product Management</div><div class="istep-desc">Workers add products anytime &mdash; admin approves them. No extra cost, no tech person needed.</div></div></div>
+          <div class="istep"><div class="istep-num">&#128202;</div><div class="istep-content"><div class="istep-title">Dashboard &amp; Reports</div><div class="istep-desc">Daily, weekly, monthly and yearly sales with charts, top products, and worker performance.</div></div></div>
+          <div class="istep"><div class="istep-num">&#127912;</div><div class="istep-content"><div class="istep-title">Fully White-Label</div><div class="istep-desc">Change shop name, logo, colors, and business info. Works for any type of retail shop.</div></div></div>
+        </div>
+        <div class="wizard-nav">
+          <div class="wizard-progress"><div class="wprog-dot active"></div><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot"></div></div>
+          <button class="btn btn-primary btn-lg" onclick="goWizardStep(2)">Next: Requirements &#8594;</button>
+        </div>
+      </div>
+
+      <!-- Pane 2: Requirements -->
+      <div class="wizard-pane" id="wpane-2">
+        <div class="wizard-pane-icon">&#128203;</div>
+        <div class="wizard-pane-title">What You Need First</div>
+        <div class="wizard-pane-sub">Before running ShopDesk as a desktop app, install these on the computer. You only do this once ever.</div>
+        <div class="instruction-steps">
+          <div class="istep"><div class="istep-num">1</div><div class="istep-content">
+            <div class="istep-title">Install Node.js (v18 or higher)</div>
+            <div class="istep-desc">Node.js powers Electron. Download and install it once on this computer.</div>
+            <div class="istep-code">1. Open your browser and go to:  https://nodejs.org
+2. Click the big green "LTS" version button to download
+3. Run the downloaded installer
+4. Keep all the default options and click Next / Finish</div>
+            <div class="istep-note">&#9888;&#65039; After installing Node.js, restart your computer before continuing to step 2.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">2</div><div class="istep-content">
+            <div class="istep-title">Verify Node.js installed correctly</div>
+            <div class="istep-desc">Open Command Prompt (Windows key → type cmd → Enter) and run both of these:</div>
+            <div class="istep-code">node --version
+npm --version</div>
+            <div class="istep-success">&#9989; You should see version numbers like v18.x.x and 9.x.x — that means it worked.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">3</div><div class="istep-content">
+            <div class="istep-title">Extract the ShopDeskPOS folder</div>
+            <div class="istep-desc">If you received a .zip file, right-click it and choose "Extract All". Put the folder somewhere easy to find, like your Desktop or Documents.</div>
+            <div class="istep-note">&#9888;&#65039; Never run the app from inside a .zip file. Always extract it first.</div>
+          </div></div>
+        </div>
+        <div class="wizard-nav">
+          <div class="wizard-progress"><div class="wprog-dot"></div><div class="wprog-dot active"></div><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot"></div></div>
+          <button class="btn btn-secondary btn-lg" onclick="goWizardStep(1)">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goWizardStep(3)">Next: Installation &#8594;</button>
+        </div>
+      </div>
+
+      <!-- Pane 3: Installation -->
+      <div class="wizard-pane" id="wpane-3">
+        <div class="wizard-pane-icon">&#9881;&#65039;</div>
+        <div class="wizard-pane-title">Installing &amp; Running ShopDesk</div>
+        <div class="wizard-pane-sub">Follow these steps in order. Steps 1 to 3 are done only once. After that, just use step 4 to open the app.</div>
+        <div class="instruction-steps">
+          <div class="istep"><div class="istep-num">1</div><div class="istep-content">
+            <div class="istep-title">Open Command Prompt as Administrator</div>
+            <div class="istep-desc">Press the <strong>Windows key</strong>, type <strong>cmd</strong>, then right-click "Command Prompt" and choose <strong>"Run as administrator"</strong>. Click Yes on the permission popup.</div>
+            <div class="istep-note">&#9888;&#65039; You must run as Administrator. Otherwise npm install may fail with a permission error.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">2</div><div class="istep-content">
+            <div class="istep-title">Navigate to the ShopDeskPOS folder</div>
+            <div class="istep-desc">In Command Prompt, type cd followed by the full path to the folder. For example:</div>
+            <div class="istep-code">cd C:\Users\YourName\Desktop\ShopDeskPOS</div>
+            <div class="istep-note">&#128161; Tip: You can drag the ShopDeskPOS folder directly into the Command Prompt window to paste its path.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">3</div><div class="istep-content">
+            <div class="istep-title">Install dependencies (first time only)</div>
+            <div class="istep-desc">This downloads Electron and all required files. Takes 1 to 3 minutes depending on internet speed.</div>
+            <div class="istep-code">npm install</div>
+            <div class="istep-success">&#9989; Done when you see a message like: "added 123 packages in 45s"</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">4</div><div class="istep-content">
+            <div class="istep-title">Launch the app (every time)</div>
+            <div class="istep-desc">Every time you want to open ShopDesk, open Command Prompt in the ShopDeskPOS folder and run:</div>
+            <div class="istep-code">npm start</div>
+            <div class="istep-success">&#9989; ShopDesk opens in its own window. You can close Command Prompt after it launches.</div>
+          </div></div>
+        </div>
+        <div class="wizard-nav">
+          <div class="wizard-progress"><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot active"></div><div class="wprog-dot"></div><div class="wprog-dot"></div></div>
+          <button class="btn btn-secondary btn-lg" onclick="goWizardStep(2)">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goWizardStep(4)">Next: First Login &#8594;</button>
+        </div>
+      </div>
+
+      <!-- Pane 4: First Login -->
+      <div class="wizard-pane" id="wpane-4">
+        <div class="wizard-pane-icon">&#128272;</div>
+        <div class="wizard-pane-title">First Login &amp; Configuration</div>
+        <div class="wizard-pane-sub">The app is running. Here is exactly what to do the very first time you open ShopDesk.</div>
+        <div class="instruction-steps">
+          <div class="istep"><div class="istep-num">1</div><div class="istep-content">
+            <div class="istep-title">Log in as Admin</div>
+            <div class="istep-desc">On the login screen, click the <strong>Admin</strong> tab on the right side. Use the default password to log in for the first time:</div>
+            <div class="istep-code">Password:  admin123</div>
+            <div class="istep-note">&#9888;&#65039; Change this password immediately after logging in. Go to Settings &#8594; Security &#8594; Change Password.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">2</div><div class="istep-content">
+            <div class="istep-title">Set up your shop branding</div>
+            <div class="istep-desc">Go to <strong>Settings &#8594; Branding</strong> to enter your shop name, tagline, and logo URL. Go to <strong>Settings &#8594; Business Info</strong> to add your address, phone, email, and hours. All of this appears on the login screen and every printed receipt.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">3</div><div class="istep-content">
+            <div class="istep-title">Add your workers</div>
+            <div class="istep-desc">Go to <strong>Staff &#8594; Add Worker</strong>. Enter each worker's name, select their role, and set their permissions. Workers log in by typing their name &mdash; no password needed for them.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">4</div><div class="istep-content">
+            <div class="istep-title">Add your products</div>
+            <div class="istep-desc">Go to <strong>Products &#8594; Add Product</strong> to add items to your catalog. You can also let workers add products from the POS screen during their shift &mdash; you approve them from the Products page.</div>
+          </div></div>
+        </div>
+        <div class="wizard-nav">
+          <div class="wizard-progress"><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot active"></div><div class="wprog-dot"></div></div>
+          <button class="btn btn-secondary btn-lg" onclick="goWizardStep(3)">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goWizardStep(5)">Next: Build .exe &#8594;</button>
+        </div>
+      </div>
+
+      <!-- Pane 5: Build installer -->
+      <div class="wizard-pane" id="wpane-5">
+        <div class="wizard-pane-icon">&#128230;</div>
+        <div class="wizard-pane-title">Build a Windows Installer (.exe)</div>
+        <div class="wizard-pane-sub">Want to install ShopDesk on other computers without Node.js? Build a standalone .exe installer that anyone can run.</div>
+        <div class="instruction-steps">
+          <div class="istep"><div class="istep-num">1</div><div class="istep-content">
+            <div class="istep-title">Run the build command</div>
+            <div class="istep-desc">In Command Prompt (as Administrator), from inside the ShopDeskPOS folder, run:</div>
+            <div class="istep-code">npm run build</div>
+            <div class="istep-note">&#9888;&#65039; Requires internet the first time. May take 5 to 10 minutes. Do not close Command Prompt while it runs.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">2</div><div class="istep-content">
+            <div class="istep-title">Find your installer in the dist\ folder</div>
+            <div class="istep-desc">When the build finishes, open the dist\ folder inside ShopDeskPOS. You will find a file like:</div>
+            <div class="istep-code">dist\ShopDesk POS Setup 2.0.0.exe</div>
+            <div class="istep-success">&#9989; Copy this .exe to any Windows PC and double-click to install. No Node.js needed on the other computer.</div>
+          </div></div>
+          <div class="istep"><div class="istep-num">3</div><div class="istep-content">
+            <div class="istep-title">If the build fails</div>
+            <div class="istep-desc">Try this fix and run the build again:</div>
+            <div class="istep-code">npm install --save-dev electron-builder
+npm run build</div>
+            <div class="istep-note">&#128161; If you see a "windows-build-tools" error, run: npm install --global --production windows-build-tools</div>
+          </div></div>
+        </div>
+        <div class="wizard-nav">
+          <div class="wizard-progress"><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot"></div><div class="wprog-dot active"></div></div>
+          <button class="btn btn-secondary btn-lg" onclick="goWizardStep(4)">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="finishWizard()">&#128640; Launch ShopDesk</button>
+        </div>
+      </div>
+
+    </div><!-- /wizard-right -->
+  </div><!-- /electron-wizard -->
+
+  <!-- BROWSER FOLDER PICKER (shown when NOT running in Electron) -->
+  <div id="browser-setup" style="display:none;width:100%;align-items:center;justify-content:center;">
+    <div class="setup-card">
+      <div class="setup-icon">&#128193;</div>
+      <h2 class="setup-title">Welcome to ShopDesk</h2>
+      <p class="setup-desc">Choose a folder on your computer to store your shop data. All sales, products and settings will be saved there. You can change this later in Settings.</p>
+      <div id="folder-display" class="folder-path empty">
+        <span>&#128194;</span>
+        <span id="folder-path-text">No folder selected yet</span>
+      </div>
+      <button class="folder-browse" onclick="selectFolder()"><span>&#128193;</span> Choose Data Folder</button>
+      <div id="setup-status" class="backup-status" style="display: none;"></div>
+      <div id="data-preview" style="display: none;">
+        <div class="data-stats">
+          <div class="stat-item"><div class="stat-value" id="preview-products">0</div><div class="stat-label">Products</div></div>
+          <div class="stat-item"><div class="stat-value" id="preview-sales">0</div><div class="stat-label">Sales</div></div>
+          <div class="stat-item"><div class="stat-value" id="preview-workers">0</div><div class="stat-label">Workers</div></div>
+        </div>
+        <button class="folder-browse" onclick="initializeDataFolder()" style="margin-top:16px;background:var(--accent2);">
+          <span>&#128640;</span> Start Using ShopDesk
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!--═══════════════════════════════════════════
+    LOGIN SCREEN
+════════════════════════════════════════════-->
+<div id="login-screen" style="display: none;">
+  <!-- Folder indicator - shows current data location -->
+  <div style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+    <div class="badge badge-green" style="cursor: pointer;" onclick="showFolderInfo()">
+      <span>📁</span> <span id="folder-indicator">Local Folder</span>
+    </div>
+  </div>
+  
+  <!-- LEFT: Brand panel -->
+  <div class="login-left">
+    <div class="brand-logo-wrap">
+      <img class="brand-logo-img" id="brand-logo-img" src="" alt=""/>
+      <span id="brand-logo-letter">S</span>
+    </div>
+    <div class="brand-name" id="brand-name-display">ShopDesk</div>
+    <div class="brand-tagline" id="brand-tagline-display">Complete Retail Management System</div>
+    <div class="brand-info-list">
+      <div class="brand-info-item">
+        <div class="brand-info-icon">📍</div>
+        <div class="brand-info-text"><strong id="brand-address-display">Set in Settings</strong>Business Address</div>
+      </div>
+      <div class="brand-info-item">
+        <div class="brand-info-icon">📞</div>
+        <div class="brand-info-text"><strong id="brand-phone-display">Set in Settings</strong>Contact Number</div>
+      </div>
+      <div class="brand-info-item">
+        <div class="brand-info-icon">🌐</div>
+        <div class="brand-info-text"><strong id="brand-email-display">Set in Settings</strong>Email / Website</div>
+      </div>
+      <div class="brand-info-item">
+        <div class="brand-info-icon">🕐</div>
+        <div class="brand-info-text"><strong id="brand-hours-display">Set in Settings</strong>Business Hours</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Login form -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <div class="login-form-title">Welcome back</div>
+      <div class="login-form-sub">Sign in to continue</div>
+
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="switchRole('worker')">🧑‍💼 Worker</button>
+        <button class="role-tab" onclick="switchRole('admin')">🔐 Admin</button>
+      </div>
+
+      <!-- Worker form -->
+      <div id="worker-form">
+        <div class="field">
+          <label>Your Name</label>
+          <input class="inp" id="worker-name-inp" placeholder="Enter your full name" />
+        </div>
+        <div class="remember-row">
+          <label class="toggle-wrap">
+            <div class="toggle">
+              <input type="checkbox" id="worker-remember"/>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </div>
+            <span>Remember me</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Admin form -->
+      <div id="admin-form" class="hidden">
+        <div class="field">
+          <label>Password</label>
+          <input class="inp" type="password" id="admin-pw-inp" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+        <div class="remember-row">
+          <label class="toggle-wrap">
+            <div class="toggle">
+              <input type="checkbox" id="admin-remember"/>
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </div>
+            <span>Remember me</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="login-err" id="login-err"></div>
+      <button class="login-submit" onclick="doLogin()" id="login-btn">Start Selling →</button>
+    </div>
+  </div>
+</div>
+
+<!--═══════════════════════════════════════════
+    MAIN APP
+════════════════════════════════════════════-->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon" id="sb-icon">S</div>
+        <span id="sb-name">ShopDesk</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sb-user-name">—</div>
+      <div class="sidebar-user-role" id="sb-user-role">—</div>
+    </div>
+    <div class="sidebar-nav" id="sidebar-nav"></div>
+    <div class="sidebar-footer">
+      <div class="logout-row" onclick="logout()">
+        <span>↩</span><span>Log out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub" id="dash-date"></div>
+        </div>
+        <div>
+          <button class="btn btn-secondary" onclick="exportSales()" style="margin-right:8px;">⬇ Export CSV</button>
+          <button class="btn btn-primary" onclick="refreshDashboard()">🔄 Refresh</button>
+        </div>
+      </div>
+      
+      <!-- Sales Summary Cards -->
+      <div class="report-grid-4" id="dashboard-stats"></div>
+      
+      <!-- Low Stock Alert -->
+      <div id="low-stock-alert" class="card card-p" style="margin-bottom:20px; display:none;">
+        <div class="card-title" style="color:var(--danger)">⚠️ Low Stock Alert</div>
+        <div id="low-stock-items"></div>
+      </div>
+      
+      <div class="dash-grid">
+        <div class="card card-p">
+          <div class="card-title">Sales Overview</div>
+          <div class="chart-wrap"><canvas id="chart-revenue"></canvas></div>
+        </div>
+        <div class="card card-p">
+          <div class="card-title">Payment Methods</div>
+          <div class="chart-wrap" style="height:200px"><canvas id="chart-payment"></canvas></div>
+        </div>
+      </div>
+      
+      <div class="dash-grid-2" style="margin-bottom:20px;">
+        <div class="card card-p">
+          <div class="card-title">Top Products</div>
+          <div id="dashboard-top-products"></div>
+        </div>
+        <div class="card card-p">
+          <div class="card-title">Worker Performance</div>
+          <div id="dashboard-worker-stats"></div>
+        </div>
+      </div>
+      
+      <div class="card card-p">
+        <div class="card-title">Recent Transactions</div>
+        <table class="tbl">
+          <thead><tr><th>Worker</th><th>Items</th><th>Payment</th><th>Amount</th><th>Time</th></tr></thead>
+          <tbody id="recent-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- POS -->
+    <div class="page" id="page-pos">
+      <div class="page-header" style="margin-bottom:16px;">
+        <div class="page-title">Point of Sale</div>
+        <div>
+          <span class="badge badge-green" id="pos-stock-count" style="margin-right:8px;">📦 In Stock</span>
+          <button class="btn btn-secondary btn-sm" onclick="openAddProductModal()">+ Add Product</button>
+        </div>
+      </div>
+      <div class="pos-grid">
+        <div class="pos-left">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input class="inp" id="prod-search" placeholder="Search by name, brand or barcode..." oninput="debouncedSearch(this.value)" autocomplete="off"/>
+          </div>
+          <div class="cat-filters" id="cat-filters"></div>
+          <div class="products-grid" id="products-grid"></div>
+        </div>
+        <div class="cart-panel">
+          <div class="cart-title">
+            Cart <span id="cart-count" style="color:var(--muted);font-weight:500;font-size:14px">(0)</span>
+            <span class="clear-cart" onclick="clearCart()">Clear all</span>
+          </div>
+          <div class="cart-items" id="cart-items">
+            <div class="cart-empty">🛒<br/>Cart is empty.<br/>Tap a product to add.</div>
+          </div>
+          <div class="cart-footer">
+            <div class="total-row">
+              <span class="total-label">Subtotal</span>
+              <span class="total-val" id="cart-subtotal">GH₵ 0.00</span>
+            </div>
+            <div class="total-row" style="font-size:12px;">
+              <span class="total-label">Items</span>
+              <span id="cart-item-count">0</span>
+            </div>
+            <div class="pay-methods">
+              <button class="pay-btn selected" onclick="selectPay('Cash')" id="pay-Cash">💵 Cash</button>
+              <button class="pay-btn" onclick="selectPay('Mobile Money')" id="pay-MobileMoney">📱 MoMo</button>
+              <button class="pay-btn" onclick="selectPay('Card')" id="pay-Card">💳 Card</button>
+            </div>
+            <button class="checkout-btn" id="checkout-btn" disabled onclick="checkout()">Complete Sale →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="page" id="page-products">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Products</div>
+          <div class="page-sub">Manage your product catalog and inventory</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddProductModal()">+ Add Product</button>
+      </div>
+      
+      <div id="pending-section"></div>
+      
+      <div class="card card-p" style="margin-bottom:20px;">
+        <div class="card-title">Inventory Status</div>
+        <div class="report-grid-3" id="inventory-stats"></div>
+      </div>
+      
+      <div class="card card-p">
+        <div class="card-title">Active Products</div>
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Brand</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STAFF & ACTIVITY -->
+    <div class="page" id="page-staff">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Staff Management</div>
+          <div class="page-sub">Manage workers, permissions, and view activity logs</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddWorkerModal()">+ Add Worker</button>
+      </div>
+      
+      <div class="dash-grid-2" style="margin-bottom:20px;">
+        <div class="card card-p">
+          <div class="card-title">Staff Members</div>
+          <div id="staff-list"></div>
+        </div>
+        
+        <div class="card card-p">
+          <div class="card-title">Recent Activity</div>
+          <div class="activity-log" id="activity-log"></div>
+        </div>
+      </div>
+      
+      <div class="card card-p">
+        <div class="card-title">Sales Performance</div>
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Worker</th>
+              <th>Role</th>
+              <th>Today's Sales</th>
+              <th>Weekly Sales</th>
+              <th>Monthly Sales</th>
+              <th>Transactions</th>
+            </tr>
+          </thead>
+          <tbody id="worker-performance-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Reports & Analytics</div>
+          <div class="page-sub">Comprehensive business insights</div>
+        </div>
+        <button class="btn btn-secondary" onclick="exportSales()">⬇ Export CSV</button>
+      </div>
+      
+      <div class="report-filters">
+        <select class="inp" id="report-period" onchange="renderReports()" style="width:160px">
+          <option value="today">Today</option>
+          <option value="7">Last 7 Days</option>
+          <option value="30" selected>Last 30 Days</option>
+          <option value="90">Last 90 Days</option>
+          <option value="365">This Year</option>
+          <option value="all">All Time</option>
+        </select>
+        
+        <select class="inp" id="report-worker" onchange="renderReports()" style="width:160px">
+          <option value="all">All Workers</option>
+        </select>
+        
+        <select class="inp" id="report-category" onchange="renderReports()" style="width:160px">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="report-grid-4" id="report-summary-cards"></div>
+      
+      <!-- Charts -->
+      <div class="report-grid" style="margin-bottom:20px;">
+        <div class="card card-p">
+          <div class="card-title">Sales Trend</div>
+          <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
+        </div>
+        <div class="card card-p">
+          <div class="card-title">Sales by Category</div>
+          <div class="chart-wrap" style="height:200px"><canvas id="chart-category"></canvas></div>
+        </div>
+      </div>
+      
+      <div class="report-grid" style="margin-bottom:20px;">
+        <div class="card card-p">
+          <div class="card-title">Top Products</div>
+          <div id="top-products-list"></div>
+        </div>
+        <div class="card card-p">
+          <div class="card-title">Worker Performance</div>
+          <div class="chart-wrap" style="height:200px"><canvas id="chart-workers"></canvas></div>
+        </div>
+      </div>
+      
+      <div class="card card-p">
+        <div class="card-title">Detailed Sales by Period</div>
+        <table class="tbl" id="period-sales-table"></table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Settings</div>
+          <div class="page-sub">Configure your ShopDesk</div>
+        </div>
+      </div>
+      
+      <div class="settings-tabs">
+        <button class="settings-tab active" onclick="switchSettingsTab('branding')">🏪 Branding</button>
+        <button class="settings-tab" onclick="switchSettingsTab('business')">📋 Business</button>
+        <button class="settings-tab" onclick="switchSettingsTab('security')">🔐 Security</button>
+        <button class="settings-tab" onclick="switchSettingsTab('appearance')">🎨 Appearance</button>
+        <button class="settings-tab" onclick="switchSettingsTab('data')">📁 Data</button>
+      </div>
+
+      <!-- BRANDING TAB -->
+      <div class="settings-pane active" id="spane-branding">
+        <div class="settings-section">
+          <div class="settings-section-title">Shop Identity</div>
+          <div class="settings-2col">
+            <div class="field"><label>Shop Name</label><input class="inp" id="set-shop-name" oninput="livePreview()"/></div>
+            <div class="field"><label>Tagline</label><input class="inp" id="set-tagline" oninput="livePreview()"/></div>
+          </div>
+          <div class="field"><label>Logo URL (optional)</label><input class="inp" id="set-logo-url" placeholder="https://example.com/logo.png"/></div>
+          <div style="margin-top:16px;background:#F5F5F0;border-radius:12px;padding:18px;display:flex;align-items:center;gap:16px;">
+            <div id="preview-icon-wrap" style="width:56px;height:56px;border-radius:16px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:#fff;flex-shrink:0;"></div>
+            <div>
+              <div id="preview-name" style="font-family:'Fraunces',serif;font-weight:700;font-size:18px;"></div>
+              <div id="preview-tagline" style="font-size:12px;color:var(--muted);margin-top:2px;"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary mt-20" onclick="saveBranding()">Save Branding</button>
+        </div>
+      </div>
+
+      <!-- BUSINESS INFO TAB -->
+      <div class="settings-pane" id="spane-business">
+        <div class="settings-section">
+          <div class="settings-section-title">Business Details</div>
+          <div class="settings-2col">
+            <div class="field"><label>Address</label><input class="inp" id="set-address"/></div>
+            <div class="field"><label>Phone</label><input class="inp" id="set-phone"/></div>
+            <div class="field"><label>Email / Website</label><input class="inp" id="set-email"/></div>
+            <div class="field"><label>Business Hours</label><input class="inp" id="set-hours"/></div>
+          </div>
+          <button class="btn btn-primary mt-20" onclick="saveBusinessInfo()">Save Business Info</button>
+        </div>
+      </div>
+
+      <!-- SECURITY TAB -->
+      <div class="settings-pane" id="spane-security">
+        <div class="settings-section">
+          <div class="settings-section-title">Change Admin Password</div>
+          <div class="settings-2col">
+            <div class="field"><label>Current Password</label><input class="inp" type="password" id="cur-pw" placeholder="Current password"/></div>
+            <div class="field"><label>New Password</label><input class="inp" type="password" id="new-pw" placeholder="Min 4 characters"/></div>
+            <div class="field"><label>Confirm New Password</label><input class="inp" type="password" id="con-pw" placeholder="Repeat new password"/></div>
+          </div>
+          <button class="btn btn-primary mt-20" onclick="changePassword()">Update Password</button>
+        </div>
+        
+        <div class="settings-section">
+          <div class="settings-section-title">Session Settings</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Auto-logout after inactivity</div>
+              <div class="settings-row-desc">Security feature for shared devices</div>
+            </div>
+            <select class="inp" id="session-timeout" style="width:100px;">
+              <option value="0">Never</option>
+              <option value="5">5 min</option>
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="60">1 hour</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPEARANCE TAB -->
+      <div class="settings-pane" id="spane-appearance">
+        <div class="settings-section">
+          <div class="settings-section-title">Accent Color</div>
+          <div class="field"><label>Pick a color</label>
+            <input type="color" id="set-color" oninput="liveColorPreview()" style="width:48px;height:48px;border:none;border-radius:12px;cursor:pointer;padding:0;"/>
+          </div>
+          <div class="swatch-row" id="color-swatches"></div>
+          <div style="margin-top:20px;">
+            <button class="btn btn-primary" onclick="saveAppearance()">Apply Color</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA MANAGEMENT TAB (Admin Only) -->
+      <div class="settings-pane" id="spane-data">
+        <div class="data-section">
+          <div class="data-section-title">
+            <span>📁</span> Data Storage Location
+          </div>
+          <div class="folder-info">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: 600;">Current Folder</span>
+              <button class="btn btn-sm btn-secondary" onclick="changeDataFolder()">Change</button>
+            </div>
+            <div id="current-folder-path" class="folder-path-display"></div>
+            <div id="last-backup-time" class="last-backup">
+              <span>🔄</span> Last backup: <span id="backup-time">Never</span>
+            </div>
+          </div>
+          
+          <div class="backup-actions">
+            <button class="btn btn-secondary" onclick="backupNow()" style="flex: 1;">
+              <span>💾</span> Backup Now
+            </button>
+            <button class="btn btn-secondary" onclick="exportAllData()" style="flex: 1;">
+              <span>📤</span> Export All
+            </button>
+            <button class="btn btn-secondary" onclick="importData()" style="flex: 1;">
+              <span>📥</span> Import
+            </button>
+          </div>
+        </div>
+        
+        <div class="data-section">
+          <div class="data-section-title">
+            <span>🔄</span> Auto Backup Settings
+          </div>
+          
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Automatic Backups</div>
+              <div class="settings-row-desc">Backup data when internet is available</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="auto-backup" checked onchange="toggleAutoBackup()">
+              <div class="toggle-track"></div>
+              <div class="toggle-thumb"></div>
+            </label>
+          </div>
+          
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Backup Frequency</div>
+              <div class="settings-row-desc">How often to backup</div>
+            </div>
+            <select class="inp" id="backup-frequency" style="width: 120px;" onchange="updateBackupFrequency()">
+              <option value="3600000">Hourly</option>
+              <option value="86400000" selected>Daily</option>
+              <option value="604800000">Weekly</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="data-section">
+          <div class="data-section-title">
+            <span>📊</span> Data Statistics
+          </div>
+          <div class="data-stats">
+            <div class="stat-item">
+              <div class="stat-value" id="stat-products">0</div>
+              <div class="stat-label">Products</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="stat-sales">0</div>
+              <div class="stat-label">Total Sales</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="stat-revenue">GH₵ 0</div>
+              <div class="stat-label">Revenue</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="stat-workers">0</div>
+              <div class="stat-label">Workers</div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 16px;">
+            <button class="btn btn-danger" onclick="showDataResetWarning()">
+              <span>⚠️</span> Reset All Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--═══════════════════════════════════════════
+    MODALS
+════════════════════════════════════════════-->
+
+<!-- Add/Edit Product Modal with Image -->
+<div class="modal-overlay" id="modal-add-product">
+  <div class="modal-box">
+    <div class="modal-title" id="product-modal-title">Add New Product</div>
+    <div class="modal-warn hidden" id="modal-warn-prod">⚠️ This product will go to admin for approval before it appears in the store.</div>
+    
+    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+      <!-- Image Preview -->
+      <div style="width: 120px; flex-shrink: 0;">
+        <div style="width: 120px; height: 120px; border-radius: 12px; background: #F5F5F0; border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 8px;" id="product-image-preview">
+          <span style="font-size: 40px; color: #CCC;">📷</span>
+        </div>
+        <button class="btn btn-sm btn-secondary w-full" onclick="triggerImageUpload()">Upload Image</button>
+        <input type="file" id="product-image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+      </div>
+      
+      <!-- Product Details -->
+      <div style="flex: 1;">
+        <div class="settings-2col">
+          <div class="field"><label>Product Name*</label><input class="inp" id="np-name" placeholder="e.g. Milo 200g"/></div>
+          <div class="field"><label>Brand*</label><input class="inp" id="np-brand" placeholder="e.g. Nestlé"/></div>
+        </div>
+        <div class="settings-2col">
+          <div class="field"><label>Category*</label>
+            <select class="inp" id="np-cat">
+              <option>Food</option>
+              <option>Beverage</option>
+              <option>Household</option>
+              <option>Cosmetics</option>
+              <option>Electronics</option>
+              <option>Clothing</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label>Price (GH₵)*</label><input class="inp" id="np-price" type="number" step="0.01" placeholder="0.00"/></div>
+        </div>
+        <div class="settings-2col">
+          <div class="field"><label>Stock Quantity*</label><input class="inp" id="np-stock" type="number" value="100" placeholder="100"/></div>
+          <div class="field"><label>Low Stock Alert*</label><input class="inp" id="np-threshold" type="number" value="10" placeholder="10"/></div>
+        </div>
+        <div class="field"><label>Barcode (optional)</label><input class="inp" id="np-barcode" placeholder="Scan or enter barcode"/></div>
+      </div>
+    </div>
+    
+    <input type="hidden" id="edit-product-id">
+    <div class="modal-actions">
+      <button class="btn btn-secondary w-full" onclick="closeModal('add-product')">Cancel</button>
+      <button class="btn btn-primary w-full" id="np-submit-btn" onclick="submitProduct()">Add Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Worker Modal -->
+<div class="modal-overlay" id="modal-add-worker">
+  <div class="modal-box">
+    <div class="modal-title">Add New Worker</div>
+    <div class="field"><label>Full Name*</label><input class="inp" id="new-worker-name" placeholder="Worker's full name"/></div>
+    <div class="field"><label>Role*</label>
+      <select class="inp" id="new-worker-role">
+        <option value="cashier">Cashier</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="manager">Manager</option>
+        <option value="stock">Stock Manager</option>
+      </select>
+    </div>
+    <div class="field"><label>PIN (4 digits, optional)</label><input class="inp" id="new-worker-pin" type="password" maxlength="4" placeholder="e.g. 1234"/></div>
+    <div style="margin-top:4px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">Permissions</div>
+      <div class="perm-grid">
+        <div class="perm-item"><span class="perm-label">Can Sell</span><label class="toggle"><input type="checkbox" id="perm-sell" checked/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        <div class="perm-item"><span class="perm-label">Add Products</span><label class="toggle"><input type="checkbox" id="perm-addprod"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        <div class="perm-item"><span class="perm-label">View Reports</span><label class="toggle"><input type="checkbox" id="perm-reports"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        <div class="perm-item"><span class="perm-label">Apply Discounts</span><label class="toggle"><input type="checkbox" id="perm-discount"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+        <div class="perm-item"><span class="perm-label">Manage Staff</span><label class="toggle"><input type="checkbox" id="perm-manage-staff"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary w-full" onclick="closeModal('add-worker')">Cancel</button>
+      <button class="btn btn-primary w-full" onclick="submitWorker()">Add Worker</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Worker Modal -->
+<div class="modal-overlay" id="modal-edit-worker">
+  <div class="modal-box">
+    <div class="modal-title">Edit Worker</div>
+    <input type="hidden" id="edit-worker-id"/>
+    <div class="field"><label>Full Name*</label><input class="inp" id="edit-worker-name"/></div>
+    <div class="field"><label>Role*</label>
+      <select class="inp" id="edit-worker-role">
+        <option value="cashier">Cashier</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="manager">Manager</option>
+        <option value="stock">Stock Manager</option>
+      </select>
+    </div>
+    <div class="field"><label>New PIN (leave blank to keep current)</label><input class="inp" id="edit-worker-pin" type="password" maxlength="4" placeholder="Enter new PIN"/></div>
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;margin-top:4px;">Permissions</div>
+    <div class="perm-grid">
+      <div class="perm-item"><span class="perm-label">Can Sell</span><label class="toggle"><input type="checkbox" id="eperm-sell"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="perm-item"><span class="perm-label">Add Products</span><label class="toggle"><input type="checkbox" id="eperm-addprod"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="perm-item"><span class="perm-label">View Reports</span><label class="toggle"><input type="checkbox" id="eperm-reports"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="perm-item"><span class="perm-label">Apply Discounts</span><label class="toggle"><input type="checkbox" id="eperm-discount"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="perm-item"><span class="perm-label">Manage Staff</span><label class="toggle"><input type="checkbox" id="eperm-manage-staff"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary w-full" onclick="closeModal('edit-worker')">Cancel</button>
+      <button class="btn btn-primary w-full" onclick="saveEditWorker()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal-overlay" id="modal-receipt">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-title">Receipt</div>
+    <div class="receipt-wrap" id="receipt-content"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary w-full" onclick="closeModal('receipt')">Close</button>
+      <button class="btn btn-primary w-full" onclick="printReceipt()">🖨️ Print</button>
+      <button class="btn btn-secondary w-full" onclick="emailReceipt()">📧 Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- Low Stock Alert Modal -->
+<div class="modal-overlay" id="modal-low-stock">
+  <div class="modal-box">
+    <div class="modal-title">⚠️ Low Stock Alert</div>
+    <div id="low-stock-list" style="max-height: 300px; overflow-y: auto;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary w-full" onclick="closeModal('low-stock'); navigate('products')">Manage Stock</button>
+      <button class="btn btn-secondary w-full" onclick="closeModal('low-stock')">Dismiss</button>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Modal -->
+<div class="modal-overlay" id="modal-customer">
+  <div class="modal-box">
+    <div class="modal-title">👤 Customer Details (Optional)</div>
+    <div class="field"><label>Phone Number</label><input class="inp" id="customer-phone" placeholder="e.g. 024xxxxxxx"/></div>
+    <div class="field"><label>Customer Name</label><input class="inp" id="customer-name" placeholder="Enter name"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary w-full" onclick="closeModal('customer'); completeCheckout()">Skip</button>
+      <button class="btn btn-primary w-full" onclick="saveCustomerAndCheckout()">Save & Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Transaction Details Modal -->
+<div class="modal-overlay" id="modal-transaction">
+  <div class="modal-box">
+    <div class="modal-title">Transaction Details</div>
+    <div id="transaction-details"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary w-full" onclick="closeModal('transaction')">Close</button>
+      <button class="btn btn-primary w-full" onclick="printReceipt()">Print Receipt</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+//=============================================================================
+// SHOPDESK POS - COMPLETE RETAIL MANAGEMENT SYSTEM
+//=============================================================================
+
+/*──────────────────────────────────────────────
+  ENVIRONMENT & STORAGE
+──────────────────────────────────────────────*/
+const isElectron = typeof window.shopAPI !== 'undefined';
+
+const DEFAULT_DATA = {
+  shopName:'ShopDesk', 
+  tagline:'Complete Retail Management System',
+  address:'', 
+  phone:'',
+  email:'', 
+  hours:'',
+  logoUrl:'', 
+  accentColor:'#1B6B3A', 
+  adminPassword:'admin123',
+  sessionTimeout: 0,
+  workers:[
+    {id:1, name:'Admin', role:'admin', pin:'', permissions:{sell:true, addprod:true, reports:true, discount:true, manageStaff:true}},
+    {id:2, name:'Ama Owusu', role:'cashier', pin:'1234', permissions:{sell:true, addprod:false, reports:false, discount:false, manageStaff:false}},
+    {id:3, name:'Kofi Mensah', role:'supervisor', pin:'5678', permissions:{sell:true, addprod:true, reports:true, discount:true, manageStaff:false}},
+  ],
+  products:[],
+  pendingProducts:[],
+  customers:[],
+  sales:[],
+  activityLog: []
+};
+
+let data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+let session = null;
+let cart = [];
+let payMethod = 'Cash';
+let activeCategory = 'All';
+let lastReceipt = null;
+let charts = {};
+let sessionTimer = null;
+
+// Folder storage variables
+let dataFolder = null;
+let backupInterval = null;
+let directoryHandle = null;
+const DATA_FOLDER_KEY = 'shopdesk-folder';
+const BACKUP_CONFIG_KEY = 'shopdesk-backup';
+
+// Debounce function for search
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+const debouncedSearch = debounce((query) => {
+  renderProducts(query);
+}, 300);
+
+/*──────────────────────────────────────────────
+  STORAGE SYSTEM
+  • Electron  → uses shopAPI (main process / fs)
+  • Browser   → uses File System Access API
+                with localStorage fallback
+──────────────────────────────────────────────*/
+
+async function initFolderSystem() {
+  if (isElectron) {
+    // In Electron: load straight from disk, skip setup screen entirely
+    try {
+      const saved = await window.shopAPI.loadData();
+      if (saved) { data = saved; }
+      await applyLoadedData();
+    } catch (e) {
+      console.error('Electron load failed:', e);
+    }
+    hideSetupScreen();
+    return;
+  }
+
+  // Browser path — original folder picker logic
+  const savedFolder = localStorage.getItem(DATA_FOLDER_KEY);
+  if (savedFolder) {
+    try {
+      dataFolder = JSON.parse(savedFolder);
+      await loadDataFromFolder();
+      hideSetupScreen();
+    } catch (e) {
+      console.error('Failed to restore folder:', e);
+      showSetupScreen();
+    }
+  } else {
+    showSetupScreen();
+  }
+}
+
+// Show/hide screens
+// ── Wizard state ─────────────────────────────
+let wizardStep = 1;
+const WIZARD_SHOWN_KEY = 'sd-wizard-done';
+
+function showSetupScreen() {
+  const screen = document.getElementById('setup-screen');
+  screen.style.display = 'flex';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.remove('visible');
+
+  if (isElectron) {
+    // Show instruction wizard — but only on first ever launch
+    const done = localStorage.getItem(WIZARD_SHOWN_KEY);
+    document.getElementById('electron-wizard').style.display = done ? 'none' : 'flex';
+    document.getElementById('browser-setup').style.display = 'none';
+    if (done) {
+      // Already seen wizard, go straight to login
+      hideSetupScreen();
+    }
+  } else {
+    document.getElementById('electron-wizard').style.display = 'none';
+    document.getElementById('browser-setup').style.display = 'flex';
+  }
+}
+
+function hideSetupScreen() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  updateFolderIndicator();
+}
+
+// Wizard navigation
+function goWizardStep(n) {
+  wizardStep = n;
+  // Update panes
+  for (let i = 1; i <= 5; i++) {
+    const pane = document.getElementById('wpane-' + i);
+    const nav  = document.getElementById('wnum-' + i);
+    if (pane) pane.classList.toggle('active', i === n);
+    if (nav)  nav.parentElement.parentElement.classList.toggle('active', i === n);
+    if (nav && i < n) nav.parentElement.parentElement.classList.add('done');
+  }
+}
+
+function finishWizard() {
+  localStorage.setItem(WIZARD_SHOWN_KEY, '1');
+  hideSetupScreen();
+}
+
+// Select folder using File System Access API
+async function selectFolder() {
+  try {
+    if (!window.showDirectoryPicker) {
+      alert('Your browser does not support direct folder selection. Please use Chrome, Edge, or Opera for best experience.\n\nWe\'ll use localStorage instead.');
+      useLocalStorageFallback();
+      return;
+    }
+    
+    directoryHandle = await window.showDirectoryPicker();
+    dataFolder = {
+      name: directoryHandle.name,
+      id: Date.now()
+    };
+    
+    localStorage.setItem(DATA_FOLDER_KEY, JSON.stringify(dataFolder));
+    
+    document.getElementById('folder-path-text').textContent = directoryHandle.name;
+    document.getElementById('folder-display').classList.remove('empty');
+    
+    await checkExistingData();
+    
+  } catch (err) {
+    console.error('Folder selection cancelled or failed:', err);
+  }
+}
+
+// Check for existing data
+async function checkExistingData() {
+  try {
+    const files = await getFilesInDirectory(directoryHandle);
+    
+    if (files.includes('shopdesk-data.json')) {
+      const fileHandle = await directoryHandle.getFileHandle('shopdesk-data.json');
+      const file = await fileHandle.getFile();
+      const content = await file.text();
+      const existingData = JSON.parse(content);
+      
+      document.getElementById('preview-products').textContent = existingData.products?.length || 0;
+      document.getElementById('preview-sales').textContent = existingData.sales?.length || 0;
+      document.getElementById('preview-workers').textContent = existingData.workers?.length || 0;
+      
+      document.getElementById('data-preview').style.display = 'block';
+      document.getElementById('setup-status').style.display = 'none';
+      
+      if (confirm('Found existing shop data in this folder. Use it?')) {
+        data = existingData;
+        await saveDataToFolder();
+        hideSetupScreen();
+      }
+    } else {
+      document.getElementById('preview-products').textContent = '0';
+      document.getElementById('preview-sales').textContent = '0';
+      document.getElementById('preview-workers').textContent = '0';
+      document.getElementById('data-preview').style.display = 'block';
+    }
+  } catch (e) {
+    console.error('Error checking existing data:', e);
+  }
+}
+
+// Initialize data folder
+async function initializeDataFolder() {
+  await saveDataToFolder();
+  hideSetupScreen();
+  startAutoBackup();
+  toast('✅ ShopDesk is ready! Your data will be saved to: ' + directoryHandle.name);
+}
+
+// Save data to folder
+async function saveDataToFolder() {
+  if (isElectron) {
+    // Electron: use native file system via IPC
+    const result = await window.shopAPI.saveData(data);
+    localStorage.setItem('last-backup', new Date().toISOString());
+    updateBackupTimeDisplay();
+    return result?.ok !== false;
+  }
+  if (!directoryHandle) {
+    localStorage.setItem('shopdesk-data', JSON.stringify(data));
+    return true;
+  }
+  try {
+    const fileHandle = await directoryHandle.getFileHandle('shopdesk-data.json', { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(data, null, 2));
+    await writable.close();
+    const backupFileName = 'backup-' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.json';
+    const backupHandle = await directoryHandle.getFileHandle(backupFileName, { create: true });
+    const backupWritable = await backupHandle.createWritable();
+    await backupWritable.write(JSON.stringify(data, null, 2));
+    await backupWritable.close();
+    localStorage.setItem('last-backup', new Date().toISOString());
+    updateBackupTimeDisplay();
+    return true;
+  } catch (err) {
+    console.error('Error saving to folder:', err);
+    return false;
+  }
+}
+
+// Load data from folder
+async function loadDataFromFolder() {
+  if (!directoryHandle) {
+    // Fallback to localStorage
+    const saved = localStorage.getItem('shopdesk-data');
+    if (saved) {
+      try {
+        data = JSON.parse(saved);
+      } catch (e) {}
+    }
+    return true;
+  }
+  
+  try {
+    const fileHandle = await directoryHandle.getFileHandle('shopdesk-data.json');
+    const file = await fileHandle.getFile();
+    const content = await file.text();
+    
+    if (content) {
+      data = JSON.parse(content);
+      await applyLoadedData();
+      return true;
+    }
+  } catch (err) {
+    console.log('No existing data file, using defaults');
+    data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+  
+  return false;
+}
+
+// Apply loaded data
+async function applyLoadedData() {
+  updateBrandDisplay();
+  applyAccent(data.accentColor);
+}
+
+// Get files in directory
+async function getFilesInDirectory(dirHandle) {
+  const files = [];
+  for await (const entry of dirHandle.values()) {
+    if (entry.kind === 'file') {
+      files.push(entry.name);
+    }
+  }
+  return files;
+}
+
+// Fallback for browsers without File System API
+function useLocalStorageFallback() {
+  dataFolder = { name: 'Local Storage', id: 'local' };
+  localStorage.setItem(DATA_FOLDER_KEY, JSON.stringify(dataFolder));
+  document.getElementById('folder-path-text').textContent = 'Using browser storage';
+  document.getElementById('folder-display').classList.remove('empty');
+  document.getElementById('data-preview').style.display = 'block';
+  hideSetupScreen();
+}
+
+// Update folder indicator
+async function updateFolderIndicator() {
+  const indicator = document.getElementById('folder-indicator');
+  const pathDisplay = document.getElementById('current-folder-path');
+
+  if (isElectron) {
+    const p = await window.shopAPI.getDataPath().catch(()=>'App Data Folder');
+    if (indicator) indicator.textContent = 'App Data Folder';
+    if (pathDisplay) pathDisplay.textContent = p || 'App Data Folder';
+    return;
+  }
+
+  if (indicator) indicator.textContent = dataFolder?.name || 'Local Folder';
+  if (pathDisplay) pathDisplay.textContent = dataFolder?.name || 'Not selected';
+}
+
+// Update backup time display
+function updateBackupTimeDisplay() {
+  const lastBackup = localStorage.getItem('last-backup');
+  const backupTimeEl = document.getElementById('backup-time');
+  if (backupTimeEl && lastBackup) {
+    const date = new Date(lastBackup);
+    backupTimeEl.textContent = date.toLocaleString();
+  }
+}
+
+/*──────────────────────────────────────────────
+  AUTO-BACKUP SYSTEM
+──────────────────────────────────────────────*/
+
+// Start automatic backups
+function startAutoBackup() {
+  if (backupInterval) {
+    clearInterval(backupInterval);
+  }
+  
+  const frequency = parseInt(localStorage.getItem('backup-frequency') || '86400000');
+  backupInterval = setInterval(checkAndBackup, 3600000); // Check every hour
+}
+
+// Check and backup
+async function checkAndBackup() {
+  const autoBackup = localStorage.getItem('auto-backup') !== 'false';
+  
+  if (!autoBackup) return;
+  
+  const lastBackup = localStorage.getItem('last-backup');
+  const frequency = parseInt(localStorage.getItem('backup-frequency') || '86400000');
+  
+  if (lastBackup && (Date.now() - new Date(lastBackup).getTime()) < frequency) {
+    return;
+  }
+  
+  await backupNow();
+}
+
+// Backup now
+async function backupNow() {
+  const success = await saveDataToFolder();
+  if (success) {
+    toast('✅ Backup completed!');
+    updateBackupTimeDisplay();
+  } else {
+    toast('❌ Backup failed', 'err');
+  }
+}
+
+// Toggle auto backup
+function toggleAutoBackup() {
+  const enabled = document.getElementById('auto-backup').checked;
+  localStorage.setItem('auto-backup', enabled);
+  if (enabled) {
+    startAutoBackup();
+  }
+}
+
+// Update backup frequency
+function updateBackupFrequency() {
+  const freq = document.getElementById('backup-frequency').value;
+  localStorage.setItem('backup-frequency', freq);
+  startAutoBackup();
+}
+
+// Change data folder (Admin only)
+async function changeDataFolder() {
+  if (session?.role !== 'admin') {
+    toast('Only admin can change data folder', 'err');
+    return;
+  }
+  if (isElectron) {
+    // In Electron, data lives in the app's userData folder — open it in Explorer
+    await window.shopAPI.openDataFolder();
+    toast('📁 Opened data folder in Explorer');
+    return;
+  }
+  if (confirm('Change data folder? Make sure to backup first.')) {
+    await selectFolder();
+  }
+}
+
+// Export all data
+async function exportAllData() {
+  if (isElectron) {
+    const result = await window.shopAPI.exportJSON(data);
+    if (result && result.ok) toast('📤 Full backup exported!');
+    return;
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'shopdesk-full-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📤 Export ready!');
+}
+
+// Import data
+async function importData() {
+  if (session?.role !== 'admin') {
+    toast('Only admin can import data', 'err');
+    return;
+  }
+  if (isElectron) {
+    const result = await window.shopAPI.importJSON();
+    if (result && result.ok) {
+      data = result.data;
+      await applyLoadedData();
+      toast('✅ Data imported successfully!');
+      location.reload();
+    }
+    return;
+  }
+  // Browser fallback
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const importedData = JSON.parse(event.target.result);
+        if (confirm('Replace current data with imported data? This cannot be undone.')) {
+          data = importedData;
+          await saveDataToFolder();
+          await applyLoadedData();
+          toast('✅ Data imported successfully!');
+          location.reload();
+        }
+      } catch (err) {
+        toast('❌ Invalid backup file', 'err');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// Show data reset warning
+function showDataResetWarning() {
+  if (session?.role !== 'admin') {
+    toast('Only admin can reset data', 'err');
+    return;
+  }
+  
+  if (confirm('⚠️ WARNING: This will delete ALL your data!\n\nAre you absolutely sure?')) {
+    if (prompt('Type "RESET" to confirm:') === 'RESET') {
+      data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      saveDataToFolder();
+      toast('✅ Data reset complete');
+      location.reload();
+    }
+  }
+}
+
+// Show folder info
+function showFolderInfo() {
+  const path = dataFolder?.name || 'Local Storage';
+  toast(`📁 Data folder: ${path}`);
+}
+
+/*──────────────────────────────────────────────
+  HELPER FUNCTIONS
+──────────────────────────────────────────────*/
+const GHS = n=>`GH₵ ${parseFloat(n||0).toFixed(2)}`;
+const CAT_EMOJI={Food:'🍜', Beverage:'🥤', Household:'🧹', Cosmetics:'💄', Electronics:'📱', Clothing:'👕', Other:'📦'};
+const SWATCHES=['#1B6B3A', '#2563EB', '#D63B3B', '#7C3AED', '#C06200', '#0891B2', '#BE185D', '#000000'];
+const ROLES = {admin:'Administrator', manager:'Manager', supervisor:'Supervisor', cashier:'Cashier', stock:'Stock Manager'};
+
+function toast(msg, type=''){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'err' ? '#D63B3B' : type === 'warn' ? '#E8891A' : '#141414';
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+function applyAccent(c){
+  document.documentElement.style.setProperty('--accent', c);
+  document.documentElement.style.setProperty('--accent2', lighten(c, 15));
+  const r = parseInt(c.slice(1,3),16), g = parseInt(c.slice(3,5),16), b = parseInt(c.slice(5,7),16);
+  document.documentElement.style.setProperty('--accent-light', `rgba(${r},${g},${b},0.09)`);
+  document.documentElement.style.setProperty('--accent-mid', `rgba(${r},${g},${b},0.2)`);
+}
+
+function lighten(hex, pct){
+  let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  r = Math.min(255, r + pct * 2.55);
+  g = Math.min(255, g + pct * 2.55);
+  b = Math.min(255, b + pct * 2.55);
+  return '#' + [r,g,b].map(x=>Math.round(x).toString(16).padStart(2,'0')).join('');
+}
+
+function openModal(id){
+  document.getElementById('modal-' + id).classList.add('open');
+}
+
+function closeModal(id){
+  document.getElementById('modal-' + id).classList.remove('open');
+}
+
+function destroyChart(key){
+  if(charts[key]){
+    charts[key].destroy();
+    delete charts[key];
+  }
+}
+
+// Date helpers
+const today = () => new Date().toDateString();
+const inDays = (date, days) => (Date.now() - new Date(date).getTime()) <= days * 86400000;
+
+// Log activity
+function logActivity(worker, action, details = '') {
+  const activity = {
+    id: Date.now(),
+    worker: worker,
+    action: action,
+    details: details,
+    timestamp: new Date().toISOString()
+  };
+  
+  if (!data.activityLog) data.activityLog = [];
+  data.activityLog.unshift(activity);
+  
+  // Keep only last 1000 activities
+  if (data.activityLog.length > 1000) data.activityLog.pop();
+  
+  saveDataToFolder();
+}
+
+/*──────────────────────────────────────────────
+  LOGIN & SESSION
+──────────────────────────────────────────────*/
+let loginRole = 'worker';
+
+function switchRole(role){
+  loginRole = role;
+  document.querySelectorAll('.role-tab').forEach((t,i)=> {
+    t.classList.toggle('active', (i===0 && role==='worker') || (i===1 && role==='admin'));
+  });
+  document.getElementById('worker-form').classList.toggle('hidden', role!=='worker');
+  document.getElementById('admin-form').classList.toggle('hidden', role!=='admin');
+  document.getElementById('login-btn').textContent = role==='worker' ? 'Start Selling →' : 'Access Dashboard →';
+  document.getElementById('login-err').textContent = '';
+}
+
+function doLogin(){
+  const err = document.getElementById('login-err');
+  err.textContent = '';
+  
+  if(loginRole === 'worker'){
+    const name = document.getElementById('worker-name-inp').value.trim();
+    if(!name){ err.textContent='Please enter your name.'; return; }
+    
+    // Find worker
+    const worker = data.workers.find(w => w.name.toLowerCase() === name.toLowerCase());
+    if (!worker) {
+      err.textContent = 'Worker not found. Please check your name.';
+      return;
+    }
+    
+    const remember = document.getElementById('worker-remember').checked;
+    if(remember) localStorage.setItem('sd-remember-worker', name);
+    else localStorage.removeItem('sd-remember-worker');
+    
+    session = { role:'worker', name: worker.name, id: worker.id, permissions: worker.permissions };
+    logActivity(worker.name, 'Logged in', 'Worker login');
+    
+  } else {
+    const pw = document.getElementById('admin-pw-inp').value;
+    if(pw !== data.adminPassword){ err.textContent='Incorrect password.'; return; }
+    
+    const remember = document.getElementById('admin-remember').checked;
+    if(remember) localStorage.setItem('sd-remember-admin', '1');
+    else localStorage.removeItem('sd-remember-admin');
+    
+    session = { role:'admin', name:'Admin', id: 1, permissions: {sell:true, addprod:true, reports:true, discount:true, manageStaff:true} };
+    logActivity('Admin', 'Logged in', 'Admin login');
+  }
+  
+  enterApp();
+  startSessionTimer();
+}
+
+function logout(){
+  if (session) {
+    logActivity(session.name, 'Logged out');
+  }
+  
+  session = null;
+  cart = [];
+  payMethod = 'Cash';
+  activeCategory = 'All';
+  
+  if (sessionTimer) clearTimeout(sessionTimer);
+  
+  Object.keys(charts).forEach(k=>destroyChart(k));
+  
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('admin-pw-inp').value = '';
+  document.getElementById('login-err').textContent = '';
+}
+
+function startSessionTimer() {
+  if (sessionTimer) clearTimeout(sessionTimer);
+  
+  const timeout = data.sessionTimeout || 0;
+  if (timeout > 0) {
+    sessionTimer = setTimeout(() => {
+      toast('Session expired due to inactivity');
+      logout();
+    }, timeout * 60 * 1000);
+  }
+}
+
+function resetSessionTimer() {
+  if (session?.role === 'admin' && data.sessionTimeout > 0) {
+    startSessionTimer();
+  }
+}
+
+// Add event listeners for activity
+['click', 'mousemove', 'keypress'].forEach(event => {
+  document.addEventListener(event, resetSessionTimer);
+});
+
+/*──────────────────────────────────────────────
+  ENTER APP
+──────────────────────────────────────────────*/
+function enterApp(){
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  
+  document.getElementById('sb-name').textContent = data.shopName;
+  document.getElementById('sb-icon').textContent = data.shopName[0].toUpperCase();
+  document.getElementById('sb-user-name').textContent = session.name;
+  document.getElementById('sb-user-role').textContent = session.role === 'admin' ? 'Administrator' : (ROLES[session.role] || 'Staff');
+  
+  buildNav();
+  navigate(session.role === 'admin' ? 'dashboard' : 'pos');
+  checkLowStock();
+  updateAllStats();
+}
+
+function buildNav(){
+  const adminNav = [
+    {id:'dashboard', icon:'📊', label:'Dashboard'},
+    {id:'pos', icon:'🛒', label:'Point of Sale'},
+    {id:'products', icon:'📦', label:'Products'},
+    {id:'staff', icon:'👥', label:'Staff'},
+    {id:'reports', icon:'📈', label:'Reports'},
+    {id:'settings', icon:'⚙️', label:'Settings'},
+  ];
+  
+  const workerNav = [
+    {id:'pos', icon:'🛒', label:'Point of Sale'},
+    {id:'products', icon:'📦', label:'Products'},
+  ];
+  
+  // Add reports if worker has permission
+  if (session.permissions?.reports) {
+    workerNav.push({id:'reports', icon:'📈', label:'Reports'});
+  }
+  
+  const items = session.role === 'admin' ? adminNav : workerNav;
+  
+  document.getElementById('sidebar-nav').innerHTML = items.map(n=>`
+    <div class="nav-item" id="nav-${n.id}" onclick="navigate('${n.id}')">
+      <span class="nav-icon">${n.icon}</span>${n.label}
+      ${n.id === 'products' && session.role === 'admin' ? '<span class="dot-badge nav-badge" id="pending-badge" style="display:none">0</span>' : ''}
+    </div>`).join('');
+}
+
+function navigate(id){
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  
+  const nav = document.getElementById('nav-'+id);
+  if(nav) nav.classList.add('active');
+  
+  const pg = document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  
+  renderPage(id);
+}
+
+function renderPage(id){
+  if(id === 'dashboard') renderDashboard();
+  if(id === 'pos') renderPOS();
+  if(id === 'products') renderProductsPage();
+  if(id === 'staff') renderStaffPage();
+  if(id === 'reports') renderReports();
+  if(id === 'settings') renderSettings();
+}
+
+/*──────────────────────────────────────────────
+  DASHBOARD
+──────────────────────────────────────────────*/
+function renderDashboard(){
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-GB', {
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+  
+  const stats = getSalesStats();
+  
+  // Stats cards
+  document.getElementById('dashboard-stats').innerHTML = [
+    {label:"Today", value:GHS(stats.today.total), sub:`${stats.today.count} transactions`, icon:'💰'},
+    {label:"This Week", value:GHS(stats.week.total), sub:`${stats.week.count} transactions`, icon:'📅'},
+    {label:"This Month", value:GHS(stats.month.total), sub:`${stats.month.count} transactions`, icon:'📆'},
+    {label:"This Year", value:GHS(stats.year.total), sub:new Date().getFullYear(), icon:'🏆'},
+  ].map(s=>`
+    <div class="stat-card">
+      <div class="stat-icon">${s.icon}</div>
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-val">${s.value}</div>
+      <div class="stat-change up">${s.sub}</div>
+    </div>`).join('');
+
+  // Revenue chart (last 7 days)
+  destroyChart('revenue');
+  const last7 = [];
+  const labels = [];
+  
+  for(let i=6; i>=0; i--){
+    const d = new Date(Date.now() - i*86400000);
+    labels.push(d.toLocaleDateString('en', {weekday:'short'}));
+    const daySales = data.sales.filter(s => new Date(s.date).toDateString() === d.toDateString())
+      .reduce((a,s) => a + s.total, 0);
+    last7.push(daySales);
+  }
+  
+  const ctxRevenue = document.getElementById('chart-revenue')?.getContext('2d');
+  if (ctxRevenue) {
+    charts.revenue = new Chart(ctxRevenue, {
+      type:'line',
+      data:{
+        labels,
+        datasets:[{
+          data:last7,
+          borderColor: data.accentColor,
+          backgroundColor: data.accentColor + '22',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: data.accentColor
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{grid:{color:'#F0F0EC'}, ticks:{callback:v=>'GH₵'+v}}}
+      }
+    });
+  }
+
+  // Payment chart
+  destroyChart('payment');
+  const cash = data.sales.reduce((a,s) => a + (s.payment === 'Cash' ? s.total : 0), 0);
+  const momo = data.sales.reduce((a,s) => a + (s.payment === 'Mobile Money' ? s.total : 0), 0);
+  const card = data.sales.reduce((a,s) => a + (s.payment === 'Card' ? s.total : 0), 0);
+  
+  const ctxPayment = document.getElementById('chart-payment')?.getContext('2d');
+  if (ctxPayment) {
+    charts.payment = new Chart(ctxPayment, {
+      type:'doughnut',
+      data:{
+        labels:['Cash', 'Mobile Money', 'Card'],
+        datasets:[{
+          data:[cash, momo, card],
+          backgroundColor:[data.accentColor, '#E8E8E4', '#FFD700'],
+          borderWidth:0
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}},
+        cutout:'70%'
+      }
+    });
+  }
+
+  // Top products
+  const productSales = {};
+  data.sales.forEach(sale => {
+    sale.items.forEach(item => {
+      if (!productSales[item.name]) {
+        productSales[item.name] = { qty:0, revenue:0 };
+      }
+      productSales[item.name].qty += item.qty;
+      productSales[item.name].revenue += item.qty * item.price;
+    });
+  });
+  
+  const topProducts = Object.entries(productSales)
+    .sort((a,b) => b[1].revenue - a[1].revenue)
+    .slice(0, 5);
+  
+  document.getElementById('dashboard-top-products').innerHTML = topProducts.length ? 
+    topProducts.map(([name, data], i) => `
+      <div class="top-product">
+        <div class="top-prod-rank">${i+1}</div>
+        <div style="flex:1">
+          <div style="font-weight:600">${name}</div>
+          <div style="font-size:11px;color:var(--muted)">${data.qty} units · ${GHS(data.revenue)}</div>
+        </div>
+      </div>
+    `).join('') : '<div style="color:#CCC;text-align:center;padding:20px">No sales data</div>';
+
+  // Worker performance
+  const workerSales = {};
+  data.sales.forEach(sale => {
+    if (!workerSales[sale.worker]) {
+      workerSales[sale.worker] = { count:0, total:0 };
+    }
+    workerSales[sale.worker].count++;
+    workerSales[sale.worker].total += sale.total;
+  });
+  
+  document.getElementById('dashboard-worker-stats').innerHTML = 
+    Object.entries(workerSales).sort((a,b) => b[1].total - a[1].total).slice(0,5)
+      .map(([name, data]) => `
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F5F5F0;">
+          <span style="font-weight:600">${name}</span>
+          <span>${data.count} sales · ${GHS(data.total)}</span>
+        </div>
+      `).join('') || '<div style="color:#CCC;padding:20px;text-align:center">No data</div>';
+
+  // Recent transactions
+  document.getElementById('recent-tbody').innerHTML = data.sales.slice(0,10).map(s => `
+    <tr onclick="showTransactionDetails(${s.id})" style="cursor:pointer;">
+      <td style="font-weight:600">${s.worker}</td>
+      <td>${s.items.length} item${s.items.length>1?'s':''}</td>
+      <td><span class="badge ${s.payment==='Cash'?'badge-green':s.payment==='Mobile Money'?'badge-blue':'badge-orange'}">${s.payment}</span></td>
+      <td style="font-weight:700;color:var(--accent)">${GHS(s.total)}</td>
+      <td class="text-muted text-sm">${new Date(s.date).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="text-align:center;padding:30px;color:#CCC">No transactions yet</td></tr>';
+}
+
+function refreshDashboard() {
+  renderDashboard();
+  checkLowStock();
+  toast('Dashboard refreshed');
+}
+
+/*──────────────────────────────────────────────
+  SALES STATISTICS
+──────────────────────────────────────────────*/
+function getSalesStats() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekAgo = new Date(today.getTime() - 7 * 86400000);
+  const monthAgo = new Date(today.getTime() - 30 * 86400000);
+  const yearAgo = new Date(today.getTime() - 365 * 86400000);
+  
+  // Daily stats
+  const todaySales = data.sales.filter(s => new Date(s.date) >= today);
+  const weekSales = data.sales.filter(s => new Date(s.date) >= weekAgo);
+  const monthSales = data.sales.filter(s => new Date(s.date) >= monthAgo);
+  const yearSales = data.sales.filter(s => new Date(s.date) >= yearAgo);
+  
+  return {
+    today: {
+      total: todaySales.reduce((sum, s) => sum + s.total, 0),
+      count: todaySales.length
+    },
+    week: {
+      total: weekSales.reduce((sum, s) => sum + s.total, 0),
+      count: weekSales.length
+    },
+    month: {
+      total: monthSales.reduce((sum, s) => sum + s.total, 0),
+      count: monthSales.length
+    },
+    year: {
+      total: yearSales.reduce((sum, s) => sum + s.total, 0),
+      count: yearSales.length
+    }
+  };
+}
+
+/*──────────────────────────────────────────────
+  PRODUCT IMAGE HANDLING
+──────────────────────────────────────────────*/
+let currentProductImage = null;
+
+function triggerImageUpload() {
+  document.getElementById('product-image-input').click();
+}
+
+function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById('product-image-preview');
+    preview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+    currentProductImage = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/*──────────────────────────────────────────────
+  POS
+──────────────────────────────────────────────*/
+function renderPOS(){
+  renderCategoryFilters();
+  renderProducts();
+  renderCart();
+}
+
+function renderCategoryFilters(){
+  const cats = ['All', ...new Set(data.products.filter(p=>p.approved).map(p=>p.category))];
+  document.getElementById('cat-filters').innerHTML = cats.map(c => 
+    `<button class="cat-btn ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setCategory(c){
+  activeCategory = c;
+  renderCategoryFilters();
+  renderProducts();
+}
+
+function renderProducts(searchQuery){
+  const q = (searchQuery || document.getElementById('prod-search').value || '').toLowerCase();
+  
+  const filtered = data.products.filter(p => 
+    p.approved && 
+    (p.name.toLowerCase().includes(q) || 
+     p.brand.toLowerCase().includes(q) ||
+     (p.barcode && p.barcode.toLowerCase().includes(q))) &&
+    (activeCategory === 'All' || p.category === activeCategory)
+  );
+  
+  document.getElementById('products-grid').innerHTML = filtered.map(p => `
+    <div class="prod-card" onclick="addToCart(${p.id})">
+      <div class="prod-image">
+        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span>${CAT_EMOJI[p.category] || '📦'}</span>`}
+      </div>
+      <div class="prod-name">${p.name}</div>
+      <div class="prod-brand">${p.brand}</div>
+      <div class="prod-price">${GHS(p.price)}</div>
+      <div class="prod-stock ${p.stock <= p.lowStockThreshold ? 'low' : ''}">
+        Stock: ${p.stock}
+      </div>
+    </div>
+  `).join('') + `
+    <button class="add-prod-tile" onclick="openAddProductModal()">
+      <div style="font-size:24px;margin-bottom:6px">＋</div>
+      <div style="font-size:12px;font-weight:600">New Product</div>
+    </button>`;
+  
+  // Update stock count
+  const totalStock = filtered.reduce((sum, p) => sum + p.stock, 0);
+  const stockEl = document.getElementById('pos-stock-count');
+  if (stockEl) stockEl.innerHTML = `📦 ${totalStock} in stock`;
+}
+
+function addToCart(id){
+  const p = data.products.find(x => x.id === id);
+  if(!p) return;
+  
+  if(p.stock <= 0) {
+    toast('❌ Out of stock!', 'err');
+    return;
+  }
+  
+  const ex = cart.find(i => i.id === id);
+  if(ex) {
+    if(ex.qty >= p.stock) {
+      toast('❌ Not enough stock!', 'err');
+      return;
+    }
+    ex.qty++;
+  } else {
+    cart.push({...p, qty:1});
+  }
+  
+  renderCart();
+}
+
+function changeQty(id, delta){
+  const idx = cart.findIndex(i => i.id === id);
+  if(idx < 0) return;
+  
+  const p = data.products.find(x => x.id === id);
+  
+  cart[idx].qty += delta;
+  
+  if(cart[idx].qty <= 0) {
+    cart.splice(idx, 1);
+  } else if(cart[idx].qty > p.stock) {
+    cart[idx].qty = p.stock;
+    toast('⚠️ Max stock reached', 'warn');
+  }
+  
+  renderCart();
+}
+
+function clearCart(){
+  cart = [];
+  renderCart();
+}
+
+function renderCart(){
+  const subtotal = cart.reduce((a,i) => a + i.price * i.qty, 0);
+  const itemCount = cart.reduce((a,i) => a + i.qty, 0);
+  
+  document.getElementById('cart-count').textContent = `(${cart.length})`;
+  document.getElementById('cart-subtotal').textContent = GHS(subtotal);
+  document.getElementById('cart-item-count').textContent = itemCount;
+  document.getElementById('checkout-btn').disabled = !cart.length;
+  
+  const el = document.getElementById('cart-items');
+  
+  if(!cart.length){
+    el.innerHTML = '<div class="cart-empty">🛒<br/>Cart is empty.<br/>Tap a product to add.</div>';
+    return;
+  }
+  
+  el.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-name">${item.name}</div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+      </div>
+      <div class="cart-item-total">${GHS(item.price * item.qty)}</div>
+    </div>
+  `).join('');
+}
+
+function selectPay(m){
+  payMethod = m;
+  document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('pay-' + m.replace(' ', '')).classList.add('selected');
+}
+
+function checkout(){
+  if(!cart.length) return;
+  openModal('customer');
+}
+
+function saveCustomerAndCheckout() {
+  const phone = document.getElementById('customer-phone').value;
+  const name = document.getElementById('customer-name').value;
+  
+  if (phone) {
+    // Find or create customer
+    let customer = data.customers?.find(c => c.phone === phone);
+    if (!customer) {
+      customer = {
+        id: Date.now(),
+        phone,
+        name: name || 'Guest',
+        totalSpent: 0,
+        visits: 1,
+        firstVisit: new Date().toISOString(),
+        lastVisit: new Date().toISOString()
+      };
+      if (!data.customers) data.customers = [];
+      data.customers.push(customer);
+    } else {
+      customer.lastVisit = new Date().toISOString();
+      customer.visits = (customer.visits || 0) + 1;
+    }
+  }
+  
+  closeModal('customer');
+  completeCheckout();
+}
+
+function completeCheckout() {
+  const subtotal = cart.reduce((a,i) => a + i.price * i.qty, 0);
+  
+  // Update stock
+  cart.forEach(item => {
+    const product = data.products.find(p => p.id === item.id);
+    if (product) {
+      product.stock -= item.qty;
+    }
+  });
+  
+  const sale = {
+    id: Date.now(),
+    transactionId: 'TXN' + Date.now().toString().slice(-8),
+    worker: session.name,
+    workerId: session.id,
+    items: cart.map(i => ({name:i.name, qty:i.qty, price:i.price})),
+    subtotal: subtotal,
+    total: subtotal,
+    payment: payMethod,
+    date: new Date().toISOString()
+  };
+  
+  data.sales.unshift(sale);
+  
+  // Log activity
+  logActivity(session.name, 'Completed sale', `${cart.length} items, ${GHS(subtotal)}`);
+  
+  saveDataToFolder();
+  
+  lastReceipt = sale;
+  cart = [];
+  renderCart();
+  showReceiptModal(sale);
+  checkLowStock();
+  updateAllStats();
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (!session) return;
+  
+  if (e.ctrlKey && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('prod-search')?.focus();
+  }
+  if (e.key === 'F2') {
+    e.preventDefault();
+    document.getElementById('checkout-btn')?.click();
+  }
+  if (e.key === 'Escape') {
+    clearCart();
+  }
+  if (e.ctrlKey && e.key === 'p') {
+    e.preventDefault();
+    openAddProductModal();
+  }
+  if (e.ctrlKey && e.key === 'd') {
+    e.preventDefault();
+    navigate('dashboard');
+  }
+});
+
+/*──────────────────────────────────────────────
+  RECEIPT
+──────────────────────────────────────────────*/
+function showReceiptModal(sale){
+  document.getElementById('receipt-content').innerHTML = `
+    <div class="receipt-shop">${data.shopName}</div>
+    <div class="receipt-addr">${data.address || 'Address not set'}</div>
+    <div class="receipt-addr">${data.phone || 'Phone not set'}</div>
+    <div class="receipt-addr text-sm">Transaction: ${sale.transactionId}</div>
+    <hr class="receipt-divider"/>
+    ${sale.items.map(i => `
+      <div class="receipt-row">
+        <span>${i.name} x${i.qty}</span>
+        <span>${GHS(i.price * i.qty)}</span>
+      </div>
+    `).join('')}
+    <hr class="receipt-divider"/>
+    <div class="receipt-total">
+      <span>Total</span>
+      <span>${GHS(sale.total)}</span>
+    </div>
+    <div class="receipt-row" style="margin-top:8px">
+      <span>Payment</span>
+      <span>${sale.payment}</span>
+    </div>
+    <div class="receipt-row">
+      <span>Served by</span>
+      <span>${sale.worker}</span>
+    </div>
+    <div class="receipt-row text-muted text-sm">
+      <span>${new Date(sale.date).toLocaleString()}</span>
+    </div>
+    <div class="receipt-thanks">
+      Thank you for shopping with us!<br/>
+      ${data.email || 'Thank you'}
+    </div>`;
+  
+  openModal('receipt');
+}
+
+function printReceipt(){
+  if(!lastReceipt) return;
+  
+  const html = `<!DOCTYPE html>
+  <html>
+  <head>
+    <style>
+      body{font-family:Arial,sans-serif;max-width:300px;margin:0 auto;padding:20px;font-size:12px;}
+      h2{text-align:center;font-size:16px;margin:5px 0;}
+      p{text-align:center;color:#666;margin:2px 0;}
+      hr{border:none;border-top:1px dashed #ccc;margin:10px 0;}
+      .row{display:flex;justify-content:space-between;margin:3px 0;}
+      .total{font-weight:bold;font-size:14px;margin-top:5px;}
+      .thanks{text-align:center;color:#888;margin-top:15px;}
+      .transaction{text-align:center;color:#999;font-size:10px;margin:5px 0;}
+    </style>
+  </head>
+  <body>
+    <h2>${data.shopName}</h2>
+    <p>${data.address || ''}</p>
+    <p>${data.phone || ''}</p>
+    <p class="transaction">${lastReceipt.transactionId}</p>
+    <hr/>
+    ${lastReceipt.items.map(i => `
+      <div class="row">
+        <span>${i.name} x${i.qty}</span>
+        <span>${GHS(i.price * i.qty)}</span>
+      </div>
+    `).join('')}
+    <hr/>
+    <div class="row total">
+      <span>TOTAL</span>
+      <span>${GHS(lastReceipt.total)}</span>
+    </div>
+    <div class="row">
+      <span>Payment</span>
+      <span>${lastReceipt.payment}</span>
+    </div>
+    <div class="row">
+      <span>Served by</span>
+      <span>${lastReceipt.worker}</span>
+    </div>
+    <div class="row">
+      <span>Date</span>
+      <span>${new Date(lastReceipt.date).toLocaleDateString()}</span>
+    </div>
+    <div class="thanks">
+      Thank you!<br/>
+      ${data.email || ''}
+    </div>
+  </body>
+  </html>`;
+  
+  if (isElectron) {
+    window.shopAPI.printReceipt(html);
+  } else {
+    const w = window.open('', '_blank', 'width=400,height=600');
+    w.document.write(html);
+    w.document.close();
+    w.print();
+  }
+}
+
+function emailReceipt() {
+  if(!lastReceipt) return;
+  
+  const email = prompt('Enter customer email:');
+  if (email) {
+    toast(`📧 Receipt sent to ${email}`);
+    logActivity(session.name, 'Emailed receipt', email);
+  }
+}
+
+function showTransactionDetails(id) {
+  const sale = data.sales.find(s => s.id === id);
+  if (!sale) return;
+  
+  document.getElementById('transaction-details').innerHTML = `
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span>Transaction ID:</span>
+        <span style="font-weight:600;">${sale.transactionId}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span>Date:</span>
+        <span>${new Date(sale.date).toLocaleString()}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span>Worker:</span>
+        <span>${sale.worker}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span>Payment:</span>
+        <span class="badge ${sale.payment==='Cash'?'badge-green':sale.payment==='Mobile Money'?'badge-blue':'badge-orange'}">${sale.payment}</span>
+      </div>
+    </div>
+    
+    <table class="tbl" style="margin-bottom:20px;">
+      <thead>
+        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+      </thead>
+      <tbody>
+        ${sale.items.map(i => `
+          <tr>
+            <td>${i.name}</td>
+            <td>${i.qty}</td>
+            <td>${GHS(i.price)}</td>
+            <td>${GHS(i.price * i.qty)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    
+    <div style="font-size:18px;font-weight:700;text-align:right;">
+      Total: ${GHS(sale.total)}
+    </div>
+  `;
+  
+  lastReceipt = sale;
+  openModal('transaction');
+}
+
+/*──────────────────────────────────────────────
+  PRODUCTS PAGE
+──────────────────────────────────────────────*/
+function renderProductsPage(){
+  updatePendingBadge();
+  
+  // Inventory stats
+  const totalProducts = data.products.length;
+  const lowStock = data.products.filter(p => p.stock <= p.lowStockThreshold).length;
+  const outOfStock = data.products.filter(p => p.stock <= 0).length;
+  const totalValue = data.products.reduce((sum, p) => sum + (p.price * p.stock), 0);
+  
+  document.getElementById('inventory-stats').innerHTML = `
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">📦</div>
+      <div class="stat-label">Total Products</div>
+      <div class="stat-val" style="font-size:20px;">${totalProducts}</div>
+    </div>
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">⚠️</div>
+      <div class="stat-label">Low Stock</div>
+      <div class="stat-val" style="font-size:20px; color:${lowStock ? 'var(--danger)' : 'inherit'};">${lowStock}</div>
+    </div>
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">💰</div>
+      <div class="stat-label">Inventory Value</div>
+      <div class="stat-val" style="font-size:20px;">${GHS(totalValue)}</div>
+    </div>
+  `;
+  
+  // Pending products section (admin only)
+  const ps = document.getElementById('pending-section');
+  
+  if(session.role === 'admin' && data.pendingProducts?.length){
+    ps.innerHTML = `<div class="card card-p" style="margin-bottom:20px; border-color:var(--warn);">
+      <div class="card-title" style="color:var(--warn)">⏳ Awaiting Approval (${data.pendingProducts.length})</div>
+      ${data.pendingProducts.map(p => `
+        <div class="pending-item">
+          <div class="prod-icon-cell">
+            ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">` : CAT_EMOJI[p.category] || '📦'}
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:700">${p.name} <span style="color:var(--muted);font-weight:400;font-size:12px">by ${p.brand}</span></div>
+            <div style="font-size:12px;color:var(--muted)">${p.category} · ${GHS(p.price)} · Stock: ${p.stock} · Submitted by ${p.submittedBy}</div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="approveProduct(${p.id})">Approve</button>
+          <button class="btn btn-sm btn-danger" onclick="rejectProduct(${p.id})">Reject</button>
+        </div>
+      `).join('')}
+    </div>`;
+  } else {
+    ps.innerHTML = '';
+  }
+  
+  // Active products table
+  document.getElementById('products-tbody').innerHTML = data.products.filter(p => p.approved).map(p => `
+    <tr>
+      <td>
+        <div class="prod-icon-cell">
+          ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;">` : CAT_EMOJI[p.category] || '📦'}
+        </div>
+      </td>
+      <td style="font-weight:600">${p.name}</td>
+      <td class="text-muted">${p.brand}</td>
+      <td>${p.category}</td>
+      <td style="font-weight:700;color:var(--accent)">${GHS(p.price)}</td>
+      <td>
+        <span style="${p.stock <= p.lowStockThreshold ? 'color:var(--danger);font-weight:700' : ''}">${p.stock}</span>
+        ${p.stock <= p.lowStockThreshold ? '<span class="badge badge-red" style="margin-left:4px">Low</span>' : ''}
+      </td>
+      <td><span class="badge badge-green">Active</span></td>
+      <td>
+        ${session.role === 'admin' || session.permissions?.addprod ? `
+          <button class="btn-icon" onclick="editProduct(${p.id})" title="Edit">✏️</button>
+          <button class="btn-icon" onclick="removeProduct(${p.id})" title="Remove">🗑</button>
+        ` : ''}
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="8" style="text-align:center;padding:30px;color:#CCC">No products yet</td></tr>';
+}
+
+function editProduct(id) {
+  const product = data.products.find(p => p.id === id);
+  if (!product) return;
+  
+  document.getElementById('product-modal-title').textContent = 'Edit Product';
+  document.getElementById('np-name').value = product.name;
+  document.getElementById('np-brand').value = product.brand;
+  document.getElementById('np-cat').value = product.category;
+  document.getElementById('np-price').value = product.price;
+  document.getElementById('np-stock').value = product.stock;
+  document.getElementById('np-threshold').value = product.lowStockThreshold;
+  document.getElementById('np-barcode').value = product.barcode || '';
+  document.getElementById('edit-product-id').value = product.id;
+  
+  // Show image if exists
+  if (product.image) {
+    document.getElementById('product-image-preview').innerHTML = `<img src="${product.image}" style="width:100%;height:100%;object-fit:cover;">`;
+    currentProductImage = product.image;
+  } else {
+    document.getElementById('product-image-preview').innerHTML = '<span style="font-size:40px;color:#CCC;">📷</span>';
+    currentProductImage = null;
+  }
+  
+  document.getElementById('modal-warn-prod').classList.add('hidden');
+  document.getElementById('np-submit-btn').textContent = 'Update Product';
+  
+  openModal('add-product');
+}
+
+function removeProduct(id){
+  if (!confirm('Are you sure you want to remove this product?')) return;
+  
+  data.products = data.products.filter(p => p.id !== id);
+  saveDataToFolder();
+  logActivity(session.name, 'Removed product', `Product ID: ${id}`);
+  toast('Product removed');
+  renderProductsPage();
+  renderProducts();
+}
+
+function updatePendingBadge(){
+  const b = document.getElementById('pending-badge');
+  if(!b) return;
+  
+  const c = data.pendingProducts?.length || 0;
+  b.style.display = c ? 'flex' : 'none';
+  b.textContent = c;
+}
+
+function openAddProductModal(){
+  // Reset form
+  document.getElementById('product-modal-title').textContent = 'Add New Product';
+  document.getElementById('edit-product-id').value = '';
+  document.getElementById('np-name').value = '';
+  document.getElementById('np-brand').value = '';
+  document.getElementById('np-cat').value = 'Food';
+  document.getElementById('np-price').value = '';
+  document.getElementById('np-stock').value = '100';
+  document.getElementById('np-threshold').value = '10';
+  document.getElementById('np-barcode').value = '';
+  document.getElementById('product-image-preview').innerHTML = '<span style="font-size:40px;color:#CCC;">📷</span>';
+  currentProductImage = null;
+  
+  const isW = session.role === 'worker';
+  const warnEl = document.getElementById('modal-warn-prod');
+  if (warnEl) warnEl.classList.toggle('hidden', !isW);
+  
+  const submitBtn = document.getElementById('np-submit-btn');
+  if (submitBtn) submitBtn.textContent = isW ? 'Submit for Approval' : 'Add Product';
+  
+  openModal('add-product');
+}
+
+function submitProduct(){
+  const name = document.getElementById('np-name').value.trim();
+  const brand = document.getElementById('np-brand').value.trim();
+  const cat = document.getElementById('np-cat').value;
+  const price = parseFloat(document.getElementById('np-price').value);
+  const stock = parseInt(document.getElementById('np-stock').value) || 0;
+  const threshold = parseInt(document.getElementById('np-threshold').value) || 10;
+  const barcode = document.getElementById('np-barcode').value.trim();
+  const editId = document.getElementById('edit-product-id').value;
+  
+  if(!name || !brand || isNaN(price) || price <= 0){
+    toast('Please fill all required fields correctly', 'err');
+    return;
+  }
+  
+  const productData = {
+    name,
+    brand,
+    category: cat,
+    price,
+    stock,
+    lowStockThreshold: threshold,
+    barcode,
+    image: currentProductImage
+  };
+  
+  if (editId) {
+    // Update existing product
+    const index = data.products.findIndex(p => p.id == editId);
+    if (index >= 0) {
+      data.products[index] = { ...data.products[index], ...productData };
+      toast('Product updated ✓');
+      logActivity(session.name, 'Updated product', name);
+    }
+  } else if(session.role === 'admin' || session.permissions?.addprod) {
+    // Add new product directly
+    data.products.push({
+      id: Date.now(),
+      ...productData,
+      approved: true
+    });
+    toast('Product added ✓');
+    logActivity(session.name, 'Added product', name);
+  } else {
+    // Submit for approval
+    data.pendingProducts.push({
+      id: Date.now(),
+      ...productData,
+      submittedBy: session.name
+    });
+    toast('Submitted for approval ✓');
+    logActivity(session.name, 'Submitted product for approval', name);
+  }
+  
+  saveDataToFolder();
+  closeModal('add-product');
+  renderProductsPage();
+  renderProducts();
+}
+
+function approveProduct(id){
+  const idx = data.pendingProducts.findIndex(p => p.id === id);
+  if(idx < 0) return;
+  
+  const p = data.pendingProducts.splice(idx, 1)[0];
+  data.products.push({
+    ...p,
+    id: Date.now(),
+    approved: true
+  });
+  
+  saveDataToFolder();
+  logActivity('Admin', 'Approved product', p.name);
+  toast('Product approved ✓');
+  renderProductsPage();
+  renderProducts();
+}
+
+function rejectProduct(id){
+  const p = data.pendingProducts.find(p => p.id === id);
+  data.pendingProducts = data.pendingProducts.filter(p => p.id !== id);
+  saveDataToFolder();
+  logActivity('Admin', 'Rejected product', p?.name);
+  toast('Product rejected');
+  renderProductsPage();
+}
+
+/*──────────────────────────────────────────────
+  STAFF PAGE
+──────────────────────────────────────────────*/
+function renderStaffPage(){
+  renderStaffList();
+  renderActivityLog();
+  renderWorkerPerformance();
+  
+  // Populate worker filter in reports
+  const workerSelect = document.getElementById('report-worker');
+  if (workerSelect) {
+    const workers = ['all', ...new Set(data.workers.map(w => w.name))];
+    workerSelect.innerHTML = workers.map(w => 
+      `<option value="${w}">${w === 'all' ? 'All Workers' : w}</option>`
+    ).join('');
+  }
+  
+  // Populate category filter
+  const catSelect = document.getElementById('report-category');
+  if (catSelect) {
+    const cats = ['all', ...new Set(data.products.map(p => p.category))];
+    catSelect.innerHTML = cats.map(c => 
+      `<option value="${c}">${c === 'all' ? 'All Categories' : c}</option>`
+    ).join('');
+  }
+}
+
+function renderStaffList(){
+  document.getElementById('staff-list').innerHTML = data.workers.map(w => `
+    <div class="staff-card">
+      <div class="staff-avatar">${w.name[0].toUpperCase()}</div>
+      <div>
+        <div class="staff-name">${w.name}</div>
+        <div class="staff-meta">${ROLES[w.role] || w.role}</div>
+        <div class="staff-meta" style="font-size:11px;">
+          ${Object.entries(w.permissions || {}).filter(([,v]) => v).map(([k]) => k).join(' · ') || 'No permissions'}
+        </div>
+      </div>
+      <div class="staff-actions">
+        <button class="btn btn-sm btn-secondary" onclick="editWorker(${w.id})">Edit</button>
+        ${w.id !== 1 ? `<button class="btn btn-sm btn-danger" onclick="removeWorker(${w.id})">Remove</button>` : ''}
+      </div>
+    </div>
+  `).join('') || '<div style="text-align:center;padding:40px;color:#CCC">No workers yet</div>';
+}
+
+function renderActivityLog(){
+  const log = data.activityLog?.slice(0, 20) || [];
+  
+  document.getElementById('activity-log').innerHTML = log.length ? log.map(a => `
+    <div class="activity-item">
+      <div class="activity-time">${new Date(a.timestamp).toLocaleTimeString()}</div>
+      <div class="activity-worker">${a.worker}</div>
+      <div class="activity-action">${a.action}</div>
+      ${a.details ? `<div class="text-muted text-sm">${a.details}</div>` : ''}
+    </div>
+  `).join('') : '<div style="text-align:center;padding:40px;color:#CCC">No activity yet</div>';
+}
+
+function renderWorkerPerformance(){
+  const performance = {};
+  
+  data.workers.forEach(w => {
+    performance[w.name] = {
+      today: 0,
+      week: 0,
+      month: 0,
+      total: 0,
+      count: 0
+    };
+  });
+  
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekAgo = new Date(today.getTime() - 7 * 86400000);
+  const monthAgo = new Date(today.getTime() - 30 * 86400000);
+  
+  data.sales.forEach(s => {
+    if (performance[s.worker]) {
+      const saleDate = new Date(s.date);
+      performance[s.worker].total += s.total;
+      performance[s.worker].count++;
+      
+      if (saleDate >= today) {
+        performance[s.worker].today += s.total;
+      }
+      if (saleDate >= weekAgo) {
+        performance[s.worker].week += s.total;
+      }
+      if (saleDate >= monthAgo) {
+        performance[s.worker].month += s.total;
+      }
+    }
+  });
+  
+  document.getElementById('worker-performance-tbody').innerHTML = data.workers.map(w => `
+    <tr>
+      <td style="font-weight:600">${w.name}</td>
+      <td>${ROLES[w.role] || w.role}</td>
+      <td style="color:var(--accent);font-weight:600">${GHS(performance[w.name]?.today || 0)}</td>
+      <td style="color:var(--accent)">${GHS(performance[w.name]?.week || 0)}</td>
+      <td style="color:var(--accent)">${GHS(performance[w.name]?.month || 0)}</td>
+      <td>${performance[w.name]?.count || 0}</td>
+    </tr>
+  `).join('');
+}
+
+function openAddWorkerModal() {
+  // Reset form
+  document.getElementById('new-worker-name').value = '';
+  document.getElementById('new-worker-pin').value = '';
+  document.getElementById('new-worker-role').value = 'cashier';
+  document.getElementById('perm-sell').checked = true;
+  document.getElementById('perm-addprod').checked = false;
+  document.getElementById('perm-reports').checked = false;
+  document.getElementById('perm-discount').checked = false;
+  document.getElementById('perm-manage-staff').checked = false;
+  
+  openModal('add-worker');
+}
+
+function submitWorker(){
+  const name = document.getElementById('new-worker-name').value.trim();
+  if(!name){ toast('Enter a name','err'); return; }
+  
+  const worker = {
+    id: Date.now(),
+    name,
+    role: document.getElementById('new-worker-role').value,
+    pin: document.getElementById('new-worker-pin').value,
+    permissions: {
+      sell: document.getElementById('perm-sell').checked,
+      addprod: document.getElementById('perm-addprod').checked,
+      reports: document.getElementById('perm-reports').checked,
+      discount: document.getElementById('perm-discount').checked,
+      manageStaff: document.getElementById('perm-manage-staff').checked,
+    }
+  };
+  
+  data.workers.push(worker);
+  saveDataToFolder();
+  logActivity(session.name, 'Added worker', name);
+  toast('Worker added ✓');
+  closeModal('add-worker');
+  renderStaffPage();
+}
+
+function editWorker(id){
+  const w = data.workers.find(x => x.id === id);
+  if(!w) return;
+  
+  document.getElementById('edit-worker-id').value = id;
+  document.getElementById('edit-worker-name').value = w.name;
+  document.getElementById('edit-worker-role').value = w.role || 'cashier';
+  document.getElementById('edit-worker-pin').value = '';
+  
+  const p = w.permissions || {};
+  document.getElementById('eperm-sell').checked = !!p.sell;
+  document.getElementById('eperm-addprod').checked = !!p.addprod;
+  document.getElementById('eperm-reports').checked = !!p.reports;
+  document.getElementById('eperm-discount').checked = !!p.discount;
+  document.getElementById('eperm-manage-staff').checked = !!p.manageStaff;
+  
+  openModal('edit-worker');
+}
+
+function saveEditWorker(){
+  const id = parseInt(document.getElementById('edit-worker-id').value);
+  const idx = data.workers.findIndex(w => w.id === id);
+  if(idx < 0) return;
+  
+  const newPin = document.getElementById('edit-worker-pin').value;
+  
+  data.workers[idx].name = document.getElementById('edit-worker-name').value.trim() || data.workers[idx].name;
+  data.workers[idx].role = document.getElementById('edit-worker-role').value;
+  if (newPin) {
+    data.workers[idx].pin = newPin;
+  }
+  data.workers[idx].permissions = {
+    sell: document.getElementById('eperm-sell').checked,
+    addprod: document.getElementById('eperm-addprod').checked,
+    reports: document.getElementById('eperm-reports').checked,
+    discount: document.getElementById('eperm-discount').checked,
+    manageStaff: document.getElementById('eperm-manage-staff').checked,
+  };
+  
+  saveDataToFolder();
+  logActivity(session.name, 'Updated worker', data.workers[idx].name);
+  toast('Worker updated ✓');
+  closeModal('edit-worker');
+  renderStaffPage();
+}
+
+function removeWorker(id){
+  if (id === 1) {
+    toast('Cannot remove admin', 'err');
+    return;
+  }
+  
+  if (confirm('Are you sure you want to remove this worker?')) {
+    const worker = data.workers.find(w => w.id === id);
+    data.workers = data.workers.filter(w => w.id !== id);
+    saveDataToFolder();
+    logActivity(session.name, 'Removed worker', worker?.name);
+    toast('Worker removed');
+    renderStaffPage();
+  }
+}
+
+/*──────────────────────────────────────────────
+  REPORTS
+──────────────────────────────────────────────*/
+function renderReports(){
+  const period = document.getElementById('report-period').value;
+  const worker = document.getElementById('report-worker').value;
+  const category = document.getElementById('report-category').value;
+  
+  let days = 30;
+  if (period === 'today') days = 1;
+  else if (period === '7') days = 7;
+  else if (period === '30') days = 30;
+  else if (period === '90') days = 90;
+  else if (period === '365') days = 365;
+  else if (period === 'all') days = 9999;
+  
+  const now = new Date();
+  const startDate = new Date(now.getTime() - days * 86400000);
+  
+  let filtered = data.sales.filter(s => new Date(s.date) >= startDate);
+  
+  // Filter by worker
+  if (worker !== 'all') {
+    filtered = filtered.filter(s => s.worker === worker);
+  }
+  
+  // Filter by category
+  if (category !== 'all') {
+    filtered = filtered.filter(s => 
+      s.items.some(item => {
+        const product = data.products.find(p => p.name === item.name);
+        return product?.category === category;
+      })
+    );
+  }
+  
+  const total = filtered.reduce((sum, s) => sum + s.total, 0);
+  const count = filtered.length;
+  const avg = count ? total / count : 0;
+  const itemsSold = filtered.reduce((sum, s) => sum + s.items.reduce((a,i) => a + i.qty, 0), 0);
+  
+  // Summary cards
+  document.getElementById('report-summary-cards').innerHTML = `
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">💰</div>
+      <div class="stat-label">Total Revenue</div>
+      <div class="stat-val" style="font-size:24px;">${GHS(total)}</div>
+    </div>
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">🧾</div>
+      <div class="stat-label">Transactions</div>
+      <div class="stat-val" style="font-size:24px;">${count}</div>
+    </div>
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">📊</div>
+      <div class="stat-label">Average Sale</div>
+      <div class="stat-val" style="font-size:24px;">${GHS(avg)}</div>
+    </div>
+    <div class="stat-card" style="padding:16px;">
+      <div class="stat-icon">📦</div>
+      <div class="stat-label">Items Sold</div>
+      <div class="stat-val" style="font-size:24px;">${itemsSold}</div>
+    </div>
+  `;
+
+  // Trend chart
+  destroyChart('trend');
+  const trendData = [];
+  const trendLabels = [];
+  
+  // Group by day
+  const dailyTotals = {};
+  filtered.forEach(s => {
+    const date = new Date(s.date).toLocaleDateString();
+    dailyTotals[date] = (dailyTotals[date] || 0) + s.total;
+  });
+  
+  // Sort dates
+  const sortedDates = Object.keys(dailyTotals).sort((a,b) => new Date(a) - new Date(b));
+  
+  sortedDates.forEach(date => {
+    trendLabels.push(date);
+    trendData.push(dailyTotals[date]);
+  });
+  
+  const ctxTrend = document.getElementById('chart-trend')?.getContext('2d');
+  if (ctxTrend) {
+    charts.trend = new Chart(ctxTrend, {
+      type:'line',
+      data:{
+        labels:trendLabels,
+        datasets:[{
+          data:trendData,
+          borderColor: data.accentColor,
+          backgroundColor: data.accentColor + '22',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: data.accentColor
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{grid:{color:'#F0F0EC'}, ticks:{callback:v=>'GH₵'+v}}}
+      }
+    });
+  }
+
+  // Category chart
+  destroyChart('category');
+  const catMap = {};
+  
+  filtered.forEach(s => {
+    s.items.forEach(i => {
+      const cat = data.products.find(p => p.name === i.name)?.category || 'Other';
+      catMap[cat] = (catMap[cat] || 0) + (i.qty * i.price);
+    });
+  });
+  
+  const catLabels = Object.keys(catMap);
+  const catVals = catLabels.map(k => parseFloat(catMap[k].toFixed(2)));
+  const palette = [data.accentColor, '#2563EB', '#E8891A', '#D63B3B', '#7C3AED', '#0891B2', '#BE185D'];
+  
+  const ctxCategory = document.getElementById('chart-category')?.getContext('2d');
+  if (ctxCategory) {
+    charts.category = new Chart(ctxCategory, {
+      type:'pie',
+      data:{
+        labels:catLabels,
+        datasets:[{
+          data:catVals,
+          backgroundColor: palette,
+          borderWidth:0
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{position:'bottom'}}
+      }
+    });
+  }
+
+  // Top products
+  const prodMap = {};
+  filtered.forEach(s => {
+    s.items.forEach(i => {
+      if(!prodMap[i.name]) prodMap[i.name] = {qty:0, rev:0};
+      prodMap[i.name].qty += i.qty;
+      prodMap[i.name].rev += i.qty * i.price;
+    });
+  });
+  
+  const tops = Object.entries(prodMap).sort((a,b) => b[1].rev - a[1].rev).slice(0,10);
+  const maxRev = tops[0] ? tops[0][1].rev : 1;
+  
+  document.getElementById('top-products-list').innerHTML = tops.map(([name,d], i) => `
+    <div class="top-product">
+      <div class="top-prod-rank">${i+1}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:13px">${name}</div>
+        <div style="font-size:11px;color:var(--muted)">${d.qty} units · ${GHS(d.rev)}</div>
+      </div>
+      <div class="top-prod-bar">
+        <div class="top-prod-fill" style="width:${(d.rev/maxRev*100).toFixed(0)}%"></div>
+      </div>
+    </div>
+  `).join('') || '<div style="color:#CCC;text-align:center;padding:20px">No data</div>';
+
+  // Worker chart
+  destroyChart('workers');
+  const wMap = {};
+  
+  filtered.forEach(s => {
+    wMap[s.worker] = (wMap[s.worker] || 0) + s.total;
+  });
+  
+  const wLabels = Object.keys(wMap);
+  const wVals = wLabels.map(k => parseFloat(wMap[k].toFixed(2)));
+  
+  const ctxWorkers = document.getElementById('chart-workers')?.getContext('2d');
+  if (ctxWorkers) {
+    charts.workers = new Chart(ctxWorkers, {
+      type:'bar',
+      data:{
+        labels:wLabels,
+        datasets:[{
+          data:wVals,
+          backgroundColor: data.accentColor + '66',
+          borderColor: data.accentColor,
+          borderWidth:2,
+          borderRadius:8
+        }]
+      },
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{y:{grid:{color:'#F0F0EC'}, ticks:{callback:v=>'GH₵'+v}}}
+      }
+    });
+  }
+
+  // Period sales table
+  const periodRows = Object.entries(dailyTotals)
+    .sort((a,b) => new Date(b[0]) - new Date(a[0]))
+    .slice(0, 30)
+    .map(([date, total]) => `
+      <tr>
+        <td>${date}</td>
+        <td>${GHS(total)}</td>
+        <td>${filtered.filter(s => new Date(s.date).toLocaleDateString() === date).length}</td>
+      </tr>
+    `).join('');
+  
+  document.getElementById('period-sales-table').innerHTML = `
+    <thead>
+      <tr><th>Date</th><th>Revenue</th><th>Transactions</th></tr>
+    </thead>
+    <tbody>
+      ${periodRows || '<tr><td colspan="3" style="text-align:center">No data</td></tr>'}
+    </tbody>
+  `;
+}
+
+/*──────────────────────────────────────────────
+  LOW STOCK CHECK
+──────────────────────────────────────────────*/
+function checkLowStock() {
+  const lowStockItems = data.products.filter(p => p.approved && p.stock <= p.lowStockThreshold);
+  
+  if (lowStockItems.length > 0) {
+    // Show alert on dashboard
+    const alertDiv = document.getElementById('low-stock-alert');
+    const itemsDiv = document.getElementById('low-stock-items');
+    
+    if (alertDiv && itemsDiv) {
+      alertDiv.style.display = 'block';
+      itemsDiv.innerHTML = lowStockItems.slice(0, 5).map(item => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid var(--border);">
+          <span><strong>${item.name}</strong> - Only ${item.stock} left (Min: ${item.lowStockThreshold})</span>
+          <button class="btn btn-sm btn-primary" onclick="navigate('products')">Restock</button>
+        </div>
+      `).join('');
+      
+      if (lowStockItems.length > 5) {
+        itemsDiv.innerHTML += `<div style="padding:8px;color:var(--muted);text-align:center;">...and ${lowStockItems.length - 5} more items</div>`;
+      }
+    }
+    
+    // Show modal if more than 3 low stock items (admin only)
+    if (lowStockItems.length > 3 && session?.role === 'admin') {
+      const list = document.getElementById('low-stock-list');
+      if (list) {
+        list.innerHTML = lowStockItems.map(item => `
+          <div style="padding:12px; border-bottom:1px solid var(--border);">
+            <strong>${item.name}</strong> - Only ${item.stock} left (threshold: ${item.lowStockThreshold})
+            <br><small>Category: ${item.category} · Brand: ${item.brand}</small>
+          </div>
+        `).join('');
+        openModal('low-stock');
+      }
+    }
+  } else {
+    const alertDiv = document.getElementById('low-stock-alert');
+    if (alertDiv) alertDiv.style.display = 'none';
+  }
+}
+
+/*──────────────────────────────────────────────
+  SETTINGS
+──────────────────────────────────────────────*/
+function switchSettingsTab(tab){
+  document.querySelectorAll('.settings-tab').forEach((t,i)=>{
+    const tabs = ['branding','business','security','appearance','data'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  
+  document.querySelectorAll('.settings-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('spane-' + tab).classList.add('active');
+  
+  if (tab === 'data' && session?.role === 'admin') {
+    updateFolderIndicator();
+    updateBackupTimeDisplay();
+    updateDataStats();
+  }
+}
+
+function renderSettings(){
+  document.getElementById('set-shop-name').value = data.shopName;
+  document.getElementById('set-tagline').value = data.tagline || '';
+  document.getElementById('set-logo-url').value = data.logoUrl || '';
+  document.getElementById('set-address').value = data.address || '';
+  document.getElementById('set-phone').value = data.phone || '';
+  document.getElementById('set-email').value = data.email || '';
+  document.getElementById('set-hours').value = data.hours || '';
+  document.getElementById('set-color').value = data.accentColor || '#1B6B3A';
+  document.getElementById('session-timeout').value = data.sessionTimeout || 0;
+  
+  livePreview();
+  renderSwatches();
+  
+  if (session?.role === 'admin') {
+    updateFolderIndicator();
+    updateBackupTimeDisplay();
+    updateDataStats();
+  }
+}
+
+function livePreview(){
+  const name = document.getElementById('set-shop-name').value || 'ShopDesk';
+  const tag = document.getElementById('set-tagline').value || '';
+  
+  document.getElementById('preview-icon-wrap').textContent = name[0].toUpperCase();
+  document.getElementById('preview-name').textContent = name;
+  document.getElementById('preview-tagline').textContent = tag;
+}
+
+function liveColorPreview(){
+  const c = document.getElementById('set-color').value;
+  applyAccent(c);
+}
+
+function renderSwatches(){
+  document.getElementById('color-swatches').innerHTML = SWATCHES.map(c => `
+    <div class="swatch ${c === data.accentColor ? 'active' : ''}" style="background:${c}" onclick="pickSwatch('${c}')"></div>
+  `).join('');
+}
+
+function pickSwatch(c){
+  document.getElementById('set-color').value = c;
+  applyAccent(c);
+  renderSwatches();
+}
+
+function saveBranding(){
+  data.shopName = document.getElementById('set-shop-name').value.trim() || 'ShopDesk';
+  data.tagline = document.getElementById('set-tagline').value.trim();
+  data.logoUrl = document.getElementById('set-logo-url').value.trim();
+  
+  saveDataToFolder();
+  updateBrandDisplay();
+  logActivity(session.name, 'Updated branding');
+  
+  document.getElementById('sb-name').textContent = data.shopName;
+  document.getElementById('sb-icon').textContent = data.shopName[0].toUpperCase();
+  
+  toast('Branding saved ✓');
+}
+
+function saveBusinessInfo(){
+  data.address = document.getElementById('set-address').value.trim();
+  data.phone = document.getElementById('set-phone').value.trim();
+  data.email = document.getElementById('set-email').value.trim();
+  data.hours = document.getElementById('set-hours').value.trim();
+  
+  saveDataToFolder();
+  updateBrandDisplay();
+  logActivity(session.name, 'Updated business info');
+  toast('Business info saved ✓');
+}
+
+function saveAppearance(){
+  data.accentColor = document.getElementById('set-color').value;
+  saveDataToFolder();
+  applyAccent(data.accentColor);
+  renderSwatches();
+  logActivity(session.name, 'Updated appearance');
+  toast('Appearance applied ✓');
+}
+
+function changePassword(){
+  const cur = document.getElementById('cur-pw').value;
+  const nw = document.getElementById('new-pw').value;
+  const con = document.getElementById('con-pw').value;
+  
+  if(cur !== data.adminPassword){ toast('Current password incorrect','err'); return; }
+  if(nw.length < 4){ toast('Password must be at least 4 characters','err'); return; }
+  if(nw !== con){ toast('Passwords do not match','err'); return; }
+  
+  data.adminPassword = nw;
+  data.sessionTimeout = parseInt(document.getElementById('session-timeout').value) || 0;
+  
+  saveDataToFolder();
+  logActivity('Admin', 'Changed password');
+  
+  ['cur-pw','new-pw','con-pw'].forEach(id => document.getElementById(id).value = '');
+  toast('Password updated ✓');
+}
+
+/*──────────────────────────────────────────────
+  UPDATE STATS
+──────────────────────────────────────────────*/
+function updateDataStats() {
+  const products = data.products?.length || 0;
+  const sales = data.sales?.length || 0;
+  const revenue = data.sales?.reduce((sum, s) => sum + s.total, 0) || 0;
+  const workers = data.workers?.length || 0;
+  
+  const statElements = {
+    'stat-products': products,
+    'stat-sales': sales,
+    'stat-revenue': GHS(revenue),
+    'stat-workers': workers
+  };
+  
+  Object.entries(statElements).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  });
+}
+
+function updateAllStats() {
+  updateDataStats();
+  if (document.getElementById('page-dashboard')?.classList.contains('active')) {
+    renderDashboard();
+  }
+  if (document.getElementById('page-reports')?.classList.contains('active')) {
+    renderReports();
+  }
+  if (document.getElementById('page-products')?.classList.contains('active')) {
+    renderProductsPage();
+  }
+  if (document.getElementById('page-staff')?.classList.contains('active')) {
+    renderStaffPage();
+  }
+}
+
+/*──────────────────────────────────────────────
+  BRAND DISPLAY
+──────────────────────────────────────────────*/
+function updateBrandDisplay(){
+  document.getElementById('brand-name-display').textContent = data.shopName;
+  document.getElementById('brand-tagline-display').textContent = data.tagline || 'Complete Retail Management System';
+  document.getElementById('brand-address-display').textContent = data.address || 'Set in Settings';
+  document.getElementById('brand-phone-display').textContent = data.phone || 'Set in Settings';
+  document.getElementById('brand-email-display').textContent = data.email || 'Set in Settings';
+  document.getElementById('brand-hours-display').textContent = data.hours || 'Set in Settings';
+  
+  const letter = document.getElementById('brand-logo-letter');
+  const img = document.getElementById('brand-logo-img');
+  
+  if(data.logoUrl){
+    img.src = data.logoUrl;
+    img.style.display = 'block';
+    letter.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    letter.style.display = '';
+    letter.textContent = data.shopName[0].toUpperCase();
+  }
+}
+
+/*──────────────────────────────────────────────
+  EXPORT
+──────────────────────────────────────────────*/
+async function exportSales(){
+  if (isElectron) {
+    const result = await window.shopAPI.exportSales(data.sales);
+    if (result && result.ok) {
+      logActivity(session.name, 'Exported sales data');
+      toast('Sales exported ✓');
+    }
+    return;
+  }
+  // Browser fallback
+  const header = 'Date,Transaction ID,Worker,Items,Quantity,Unit Price,Total,Payment\n';
+  const rows = [];
+  data.sales.forEach(s => {
+    s.items.forEach(item => {
+      rows.push(new Date(s.date).toLocaleDateString()+','+s.transactionId+','+s.worker+','+item.name+','+item.qty+','+item.price+','+(item.qty*item.price).toFixed(2)+','+s.payment);
+    });
+  });
+  const blob = new Blob([header + rows.join('\n')], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'shopdesk-sales-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  logActivity(session.name, 'Exported sales data');
+  toast('Sales exported ✓');
+}
+
+/*──────────────────────────────────────────────
+  INIT
+──────────────────────────────────────────────*/
+(async function init(){
+  await initFolderSystem();
+  
+  // Remember me
+  const rw = localStorage.getItem('sd-remember-worker');
+  if(rw){
+    document.getElementById('worker-name-inp').value = rw;
+    document.getElementById('worker-remember').checked = true;
+  }
+  
+  const ra = localStorage.getItem('sd-remember-admin');
+  if(ra){
+    document.getElementById('admin-remember').checked = true;
+  }
+  
+  // Check online status
+  window.addEventListener('online', () => {
+    toast('🌐 Back online - checking for backups...');
+    checkAndBackup();
+  });
+  
+  window.addEventListener('offline', () => {
+    toast('📴 Working offline - data saved locally');
+  });
+  
+  // Update stats periodically
+  setInterval(updateAllStats, 60000);
+})();
+</script>
+</body>
+</html>

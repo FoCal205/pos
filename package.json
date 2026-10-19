@@ -1,0 +1,57 @@
+{
+  "name": "shopdesk-pos",
+  "version": "2.0.0",
+  "description": "ShopDesk POS – Complete Retail Management System for Local Shops",
+  "main": "main.js",
+  "author": "ShopDesk",
+  "license": "MIT",
+  "scripts": {
+    "start":     "electron .",
+    "dev":       "NODE_ENV=development electron .",
+    "build":     "electron-builder --win --x64",
+    "build-mac": "electron-builder --mac",
+    "build-all": "electron-builder --win --mac --linux"
+  },
+  "build": {
+    "appId":       "com.shopdesk.pos",
+    "productName": "ShopDesk POS",
+    "copyright":   "Copyright © 2025 ShopDesk",
+    "win": {
+      "target":    [{ "target": "nsis", "arch": ["x64"] }],
+      "icon":      "assets/icon.ico"
+    },
+    "mac": {
+      "target":    "dmg",
+      "icon":      "assets/icon.icns",
+      "category":  "public.app-category.business"
+    },
+    "linux": {
+      "target":    "AppImage",
+      "icon":      "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick":                       false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon":                  "assets/icon.ico",
+      "uninstallerIcon":                "assets/icon.ico",
+      "installerHeaderIcon":            "assets/icon.ico",
+      "createDesktopShortcut":          true,
+      "createStartMenuShortcut":        true,
+      "shortcutName":                   "ShopDesk POS"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets",
+      "output":         "dist"
+    }
+  },
+  "devDependencies": {
+    "electron":         "^28.0.0",
+    "electron-builder": "^24.13.0"
+  }
+}
